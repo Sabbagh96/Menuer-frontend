@@ -71,7 +71,7 @@ const StepThree = ({ nextPage }) => {
             {BussinessCategory.map((item) => (
               <div key={item.id} className="">
                 <div className=" bg-white w-44 h-36 mb-2 border border-pink-400 rounded-lg  ">
-                  <img className='object-contain h-24 flex mx-auto mt-2  ' src={item.img}  />
+                  <img className='object-contain h-24 flex mx-auto mt-2  ' src={item.img} alt=''  />
 
                   <div>{item.title}</div>
                 </div>

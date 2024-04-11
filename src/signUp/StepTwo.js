@@ -1,10 +1,10 @@
-import React, { useState , useEffect } from "react";
+import React, { useState } from "react";
 
 const StepTwo = ({ nextPage , regEmail  }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
-  const [typing, setTyping] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -22,15 +22,8 @@ const StepTwo = ({ nextPage , regEmail  }) => {
     } else {
       setPasswordError(false);
     }
-    setTyping(true);
   };
    
-
-   useEffect(() => {
-    
-    console.log(regEmail , "from step One ")
-     
-   }, [regEmail])
    
    
   return (
@@ -83,13 +76,14 @@ const StepTwo = ({ nextPage , regEmail  }) => {
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               placeholder="Enter your password again."
+              onBlur={() => setIsTouched(true)}
             />
           </div>
-          {passwordError && typing && (
+          {passwordError &&  isTouched ?(
             <p className="text-red-500 text-sm mt-1 ml-10 ">
               Passwords do not match
             </p>
-          )}
+          ): null}
           <div className="flex items-center mb-2 mt-2 ml-10">
             <input
               type="checkbox"

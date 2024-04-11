@@ -20,7 +20,7 @@ const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-screen bg-hero_section">
       <div className="bg-white w-1/3 border rounded-xl min-h-96 absolute right-32 top-20 z-50 shadow-lg">
         <h1 className="mt-8 flex ml-10 text-xl font-bold">Create Account</h1>
         <div className="font-semibold">
