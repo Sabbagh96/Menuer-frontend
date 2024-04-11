@@ -1,10 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {colors: {
+    extend: {
+      colors: {
       'primary-cerise-950': 'rgba(255,230,242,1)',
       'primary-cerise-850': 'rgba(245,183,214,1)',
       'primary-cerise-650': 'rgba(238,135,186,1)',
@@ -151,7 +153,11 @@ module.exports = {
       'regular': '400',
       'medium': '500',
       'bold': '700',
-    },},
+    },
+    backgroundImage: {
+      hero_section: "url('/src/assets/background.jpeg')"
+    }
+  },
   },
   plugins: [],
 }
