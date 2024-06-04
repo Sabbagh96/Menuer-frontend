@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const AllShiftOrders = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("")
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+
   return (
     <div className="mx-auto justify-center place-content-center items-center">
       <div className="w-[960px] mt-[56.5px] mb-[56.5px] flex justify-between mx-auto px-4 ">

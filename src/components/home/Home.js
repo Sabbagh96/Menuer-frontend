@@ -1,7 +1,62 @@
-import React from "react";
-import MenuBar from "./menuBar/MenuBar";
+import React, { useState, useEffect } from "react";
+import MenuBar from "../menuBar/MenuBar";
+import axios from "axios";
 
 const Home = () => {
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("");
+  const [filterBy, setFilterBy] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  let totalPages;
+
+  useEffect(() => {
+    axios
+      .get(``, {
+        params: {
+          page: page,
+          sort_by: sortBy,
+          filter_by: filterBy,
+          query: searchTerm, // Adding search term to API request
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        totalPages = response.data.total_pages;
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, [page, sortBy, filterBy, searchTerm]);
+
+  const showPrevious = () => {
+    console.log("prev clicked");
+    let currentPAge = page;
+    if (!currentPAge <= 1) {
+      currentPAge--;
+      setPage(currentPAge);
+    }
+  };
+
+  const showNext = () => {
+    console.log("next clicked");
+    let currentPAge = page;
+    currentPAge++;
+    setPage(currentPAge);
+  };
+
+  const handleSortChange = (event) => {
+    setSortBy(event.target.value);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilterBy(event.target.value);
+  };
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
   return (
     <div className="w-full h-screen">
       <div className="flex ">
@@ -49,13 +104,27 @@ const Home = () => {
             <input
               className="w-[642px] h-[46px] bg-gray-100 rounded-xl p-3 flex justify-start"
               placeholder="Search for an item"
+              onChange={handleSearch}
+              value={searchTerm}
             />
-            <button className="w-[114px] h-[46px] px-5 py-3 bg-white rounded-[20px] border border-slate-500 border-opacity-20 text-center text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]">
-              Sort by
-            </button>
-            <button className="w-[114px] h-[46px] px-5 py-3 bg-white rounded-[20px] border border-slate-500 border-opacity-20 text-center text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]">
-              Filter
-            </button>
+            <select
+              className="w-[114px] h-[46px]   bg-white rounded-[20px] border border-slate-500 border-opacity-20 text-center text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]"
+              onChange={handleSortChange}
+              value={sortBy}
+            >
+              <option value="">Sort by</option>
+              <option value="name">Name</option>
+              <option value="price">Price</option>
+            </select>
+            <select
+              className="w-[114px] h-[46px] bg-white rounded-[20px] border border-slate-500 border-opacity-20 text-center text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]"
+              onChange={handleFilterChange}
+              value={filterBy}
+            >
+              <option value="">Filter</option>
+              <option value="category1">Category 1</option>
+              <option value="category2">Category 2</option>
+            </select>
           </div>
           {/*Do the map here under this on items */}
 
@@ -68,10 +137,37 @@ const Home = () => {
                   Chicken Shawerma Fattah
                 </div>
                 <div className="w-[230px] h-[56px] text-gray-500 text-sm font-light font-['Alexandria'] leading-[21px]">
-                  {"Chicken Shawerma Fattah".substring(0, 20)}
+                  {`Chicken Shawerma Fattah `.substring(0, 20)}
                 </div>
               </div>
             </div>
+          </div>
+
+          <div>
+            <nav
+              className="flex mx-auto  justify-end gap-1  p-4"
+              aria-label="Page navigation example"
+            >
+              <div className="cursor-pointer">
+                <button
+                  disabled={page === 1}
+                  className=" w-20 h-[37px] rounded-2xl cursor-pointer active:bg-pink-200 focus:bg-opacity-10 text-pink-600   text-sm font-normal font-['Alexandria'] leading-[21px]"
+                  onClick={showPrevious}
+                >
+                  Previous
+                </button>
+              </div>
+
+              <div>
+                <button
+                  disabled={page === totalPages}
+                  className="w-20 h-[37px] rounded-2xl active:bg-pink-200 focus:bg-opacity-10 text-pink-600   text-sm font-normal font-['Alexandria'] leading-[21px]"
+                  onClick={showNext}
+                >
+                  Next
+                </button>
+              </div>
+            </nav>
           </div>
         </div>
       </div>

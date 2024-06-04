@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const StepTwo = ({ nextPage, regEmail }) => {
+
+const StepTwo = ({ regEmail }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -27,17 +28,27 @@ const StepTwo = ({ nextPage, regEmail }) => {
       setPasswordError(false);
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setPasswordError(true);
+      return; // Prevent form submission
+    }
+
+    // Send POST request
     axios
-      .post("", {
-        firstName,
-        lastName,
+      .post("http://localhost:4000/signup", {
+        first_name: firstName,
+        last_name: lastName,
         password,
         email: regEmail,
       })
-      .then((response) => {
-        navigate("");
+      .then((res) => {
+        console.log(res);
+        navigate("/login");
       })
       .catch((error) => {
         console.error(error);
@@ -46,9 +57,8 @@ const StepTwo = ({ nextPage, regEmail }) => {
 
   return (
     <div className="relative w-full h-screen bg-hero_section overflow-auto">
-      <div className=" bg-white w-1/3 border rounded-xl min-h-96 absolute right-32 top-20 z-50 shadow-lg ">
+      <div className=" bg-white w-1/3 border rounded-xl min-h-96 absolute right-32 top-10 z-50 shadow-lg ">
         <h1 className="mt-8 flex ml-10 text-xl font-bold">Create Account</h1>
-        <div className="font-semibold"></div>
         <form onSubmit={handleSubmit}>
           <div>
             <div className="flex flex-nowrap justify-around ">
@@ -59,9 +69,9 @@ const StepTwo = ({ nextPage, regEmail }) => {
                 Last Name
               </div>
             </div>
-            <div className="flex">
+            <div className="flex mx-auto">
               <input
-                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-1/3 h-11 content-center text-nowrap px-2"
+                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-[150px] h-11 content-center text-nowrap px-2"
                 type="text"
                 placeholder="Mohamed"
                 value={firstName}
@@ -69,7 +79,7 @@ const StepTwo = ({ nextPage, regEmail }) => {
               />
 
               <input
-                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-1/3 h-11 content-center text-nowrap px-2 "
+                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-[170px] h-11 content-center text-nowrap px-2 "
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -81,7 +91,7 @@ const StepTwo = ({ nextPage, regEmail }) => {
                 Password
               </div>
               <input
-                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-3/4 h-11 content-center text-nowrap px-2"
+                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-10/12 h-11 content-center text-nowrap px-2"
                 type="password"
                 value={password}
                 onChange={handlePasswordChange}
@@ -94,7 +104,7 @@ const StepTwo = ({ nextPage, regEmail }) => {
               </div>
 
               <input
-                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-3/4 h-11 content-center text-nowrap px-2"
+                className="flex border-[1px] outline-none border-gray-300 rounded-lg mt-1 ml-10 w-10/12 h-11 content-center text-nowrap px-2"
                 type="password"
                 value={confirmPassword}
                 onChange={handleConfirmPasswordChange}
@@ -123,8 +133,8 @@ const StepTwo = ({ nextPage, regEmail }) => {
               </label>
             </div>
             <button
-              onClick={nextPage}
-              className="bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl  w-3/4 mt-5 mr-6 text-center "
+              type="submit"
+              className="bg-[#E32B87] mb-6 w-10/12 mx-auto text-white font-bold py-2 px-4 rounded-xl   mt-2 mr-6 text-center "
             >
               Continue
             </button>

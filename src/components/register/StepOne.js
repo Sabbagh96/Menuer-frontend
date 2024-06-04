@@ -18,19 +18,7 @@ const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
       setEmailError("Please enter a valid email address.");
       return;
     }
-    axios
-      .post("", { email: regEmail })
-      .then((response) => {
-        if (response.data.isValid) {
-          nextPage();
-        } else {
-          setEmailError(response.data.message);
-        }
-      })
-      .catch((error) => {
-        setEmailError("An error occurred while validating the email.");
-      });
-    console.log(response.data.isValid);
+    nextPage(); // Proceed to the next step
   };
 
   return (

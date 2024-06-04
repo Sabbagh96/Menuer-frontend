@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { NavLink, Outlet } from "react-router-dom";
+import { removeAuthUser } from "../../helper/Storage";
+import { useNavigate } from "react-router-dom";
 
 const MenuBar = () => {
+  const [show, setShow] = useState(false);
+
+  const navigate = useNavigate();
+  const Logout = () => {
+    removeAuthUser();
+    navigate("/");
+  };
+
   return (
     <div className="">
       <div className="w-[304px] h-[796px] px-6 py-12 bg-white border-r border-gray-500 border-opacity-10 flex-col shadow-lg justify-between items-center inline-flex ">
@@ -21,9 +31,16 @@ const MenuBar = () => {
               </div>
             </div>
             <div className="w-5 h-5 relative">
-              <IoIosArrowDropdown />
+              <button className="cursor-pointer" onClick={() => setShow(!show)}>
+                <IoIosArrowDropdown />
+              </button>
             </div>
           </div>
+          {show && (
+            <div className="w-32 h-20 absolute right-0 top-7 cursor-default bg-white border border-gray-500 rounded-2xl ">
+              <button onClick={Logout} className="w-full rounded-2xl p-2 ">Logout</button>
+            </div>
+          )}
 
           <div className="w-64 h-[45px] flex-col justify-center items-center inline-flex rounded-full ">
             <NavLink

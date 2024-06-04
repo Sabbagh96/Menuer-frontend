@@ -5,10 +5,13 @@ import img1 from "../../assets/restaurant.png";
 import img2 from "../../assets/coffee.png";
 import img3 from "../../assets/juice.png";
 import img4 from "../../assets/iceCream.png";
+import { useNavigate } from "react-router-dom";
+
 const StepThree = ({ nextPage }) => {
   const [businessCategory, setBusinessCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
   const BussinessCategory = [
     {
       title: "Restaurant",
@@ -42,12 +45,19 @@ const StepThree = ({ nextPage }) => {
 
   const handleCategorySelect = (id) => {
     setSelectedCategory(id);
+    setErrorMessage(""); // Clear error message when category is selected
   };
+
   const handleSubmit = () => {
+    if (!selectedCategory) {
+      setErrorMessage("Please choose a business category.");
+      return;
+    }
+
     axios
       .post("", { category_id: selectedCategory })
       .then(() => {
-        nextPage();
+        navigate("/stepfour");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -65,7 +75,7 @@ const StepThree = ({ nextPage }) => {
             <h3 className="text-sm">Choose Bussiness Category</h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 justify-center items-center mx-auto p-4 w-[374px] h-[340px] overflow-y-scroll no-scrollbar">
+          <div className="grid grid-cols-2 gap-2 justify-center items-center mx-auto  w-[374px] h-[340px] overflow-y-scroll no-scrollbar">
             {BussinessCategory.map((item) => (
               <div
                 key={item.id}
@@ -90,11 +100,17 @@ const StepThree = ({ nextPage }) => {
               </div>
             ))}
           </div>
+
+          {/* Display Error Message */}
+         
         </div>
 
         <button
           onClick={handleSubmit}
-          className="bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl  w-10/12 mt-5 mx-auto text-center "
+          className={`bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl w-10/12 mt-5 mx-auto text-center ${
+            selectedCategory ? "" : "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={!selectedCategory}
         >
           Continue
         </button>

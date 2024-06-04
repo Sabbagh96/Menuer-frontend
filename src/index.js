@@ -5,15 +5,21 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthProvider";
 import "./Menuer-Library.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import SectionContextProvider from "./context/SectionsProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
+        {" "}
+        <SectionContextProvider>
+          <Routes>
+            <Route path="/*" element={<App />} />
+            
+          </Routes>
+        </SectionContextProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
