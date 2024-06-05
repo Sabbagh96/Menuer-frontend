@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ActiveMembers = () => {
   return (
@@ -6,7 +7,9 @@ const ActiveMembers = () => {
       <div className="flex justify-between p-6 w-[800px] mx-auto">
         <div>Stuff Members - Active Members</div>
         <div>
-          <button>Add New</button>
+          <Link to={"/addnew"}>
+            <button>Add New</button>
+          </Link>
         </div>
       </div>
       <div className="w-[800px] h-auto bg-white border border-gray-100 shadow-lg rounded-xl flex mx-auto justify-center flex-col">

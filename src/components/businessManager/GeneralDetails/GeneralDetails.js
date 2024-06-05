@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const GeneralDetails = () => {
   return (
@@ -8,21 +9,25 @@ const GeneralDetails = () => {
           GeneralDetails
         </div>
         <div className="flex justify-between">
-          <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
-            {" "}
-            <div className="flex gap-2">
-              <span>Icon</span>
-              <div>Bussiness Details</div>
+          <Link to={"/businessdetails"}>
+            <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
+              {" "}
+              <div className="flex gap-2">
+                <span>Icon</span>
+                <div>Bussiness Details</div>
+              </div>
+              <div>Icon</div>
+            </div>{" "}
+          </Link>
+          <Link to={"/contactdetails"}>
+            <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
+              <div className="flex gap-2">
+                <span>Icon</span>
+                <div>Contact Details</div>
+              </div>
+              <div>Icon</div>
             </div>
-            <div>Icon</div>
-          </div>
-          <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
-            <div className="flex gap-2">
-              <span>Icon</span>
-              <div>Contact Details</div>
-            </div>
-            <div>Icon</div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

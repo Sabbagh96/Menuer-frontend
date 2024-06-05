@@ -1,5 +1,6 @@
 import React from "react";
 import "../../src/Menuer-Library.css";
+import { Link } from "react-router-dom";
 
 const NotFound = () => {
   return (
@@ -8,7 +9,12 @@ const NotFound = () => {
       <p className="text-2xl font-bold text-style-heading-h-1">
         Page Not Found
       </p>
-      <button className="btn btn-md btn-primary-solid border  border-gray-600">Back To Menue</button>
+      <Link
+        to={"/home"}
+        className="btn btn-md btn-primary-solid border  border-gray-600"
+      >
+        Back To Menuer
+      </Link>
     </div>
   );
 };

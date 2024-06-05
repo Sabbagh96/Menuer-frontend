@@ -31,30 +31,31 @@ const Login = () => {
         email: user,
         password: pwd,
       });
-      console.log(response);
-      //Local Storage
-      setAuthUser(response.data);
-
-      /* const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken }); */
-      /* setUser("");
-      setPwd(""); */
       if (response.data) {
-        navigate("/home");
-        setAuthUser(response.data);
+        const accessToken = response?.token;
+        const roles = response?.data?.role;
+
+       // console.log(response, roles, accessToken);
+
+        setAuthUser(response);
+        setAuth({ user, pwd, roles, accessToken });
+        setUser("");
+        setPwd("");
+
+
+        if (roles === "owner") {
+          const hasBusiness = response?.data?.hasBusiness;
+          if (hasBusiness) {
+            navigate("/home");
+          } else {
+            navigate("/nobusiness");
+          }
+        } else {
+          navigate("/home");
+        }
       } else {
         navigate("/");
       }
-
-      const hasBusiness = response?.data?.hasBusiness;
-      /* if (hasBusiness) {
-        // Navigate to the business page
-        navigate("/home");
-      } else {
-        // Navigate to the create Menuer page
-        navigate("/nobusiness");
-      } */
     } catch (error) {
       console.log(error.response);
     }

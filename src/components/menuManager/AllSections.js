@@ -7,13 +7,13 @@ const AllSections = () => {
 
   useEffect(() => {
     axios
-      .get(``, {
+      .get(`http://localhost:4000/menuer/business/dashboard/menuManger`, {
         params: {
-          query: searchTerm, // Adding search term to API request
+          query: searchTerm,
         },
       })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.sections);
         setData(response.data);
       })
       .catch((error) => {
@@ -40,19 +40,21 @@ const AllSections = () => {
           className="w-[290px] h-[46px] mx-2 bg-gray-100 rounded-xl p-3 flex justify-start"
           placeholder="Search for Menu Section"
         />
-        <Link to={"/sectiondetails"}>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="w-[136px] h-[136px] mx-6 gap-2  bg-white rounded-2xl border border-slate-500 border-opacity-20 items-start ">
+
+        <div className="grid grid-cols-4 gap-4">
+          <div className="w-[136px] h-[136px] mx-6 gap-2  bg-white rounded-2xl border border-slate-500 border-opacity-20 items-start ">
+            <Link to={"/sectiondetails"}>
+              {" "}
               <div className="grid grid-cols-2 mx-auto ml-3 gap-2 p-2 justify-center items-center">
                 <div className="w-[60px] h-[50.22px] rounded-xl border border-gray-300 bg-red-500 "></div>
                 <div className="w-[60px] h-[50.22px] rounded-xl border border-gray-300 bg-red-500 "></div>
                 <div className="w-[60px] h-[50.22px] rounded-xl border border-gray-300 bg-red-500 "></div>
                 <div className="w-[60px] h-[50.22px] rounded-xl border border-gray-300 bg-red-500 "></div>
               </div>
-              <div className="mt-2">Section Name</div>
-            </div>
+              <div className="mt-2">Section Name</div>{" "}
+            </Link>
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );

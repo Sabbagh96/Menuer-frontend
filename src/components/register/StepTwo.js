@@ -38,17 +38,20 @@ const StepTwo = ({ regEmail }) => {
       return; // Prevent form submission
     }
 
+    // Prepare the payload
+
     // Send POST request
     axios
-      .post("http://localhost:4000/signup", {
+      .post("http://localhost:4000/auth/signup", {
+        email: regEmail,
         first_name: firstName,
         last_name: lastName,
-        password,
-        email: regEmail,
+        password: password,
+        confirmPassword: confirmPassword,
       })
       .then((res) => {
         console.log(res);
-        navigate("/login");
+        navigate("/accountcreated");
       })
       .catch((error) => {
         console.error(error);

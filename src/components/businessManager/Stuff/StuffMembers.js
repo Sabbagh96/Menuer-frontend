@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const StuffMembers = () => {
   return (
@@ -8,21 +9,25 @@ const StuffMembers = () => {
           Stuff Members
         </div>
         <div className="flex justify-between">
-          <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
-            {" "}
-            <div className="flex gap-2">
-              <span>Icon</span>
-              <div>View Active Members</div>
+          <Link to={"/activemembers"}>
+            <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
+              {" "}
+              <div className="flex gap-2">
+                <span>Icon</span>
+                <div>View Active Members</div>
+              </div>
+              <div>Icon</div>
             </div>
-            <div>Icon</div>
-          </div>
-          <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
-            <div className="flex gap-2">
-              <span>Icon</span>
-              <div>Add New Member</div>
+          </Link>
+          <Link to={"/addnew"}>
+            <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
+              <div className="flex gap-2">
+                <span>Icon</span>
+                <div>Add New Member</div>
+              </div>
+              <div>Icon</div>
             </div>
-            <div>Icon</div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

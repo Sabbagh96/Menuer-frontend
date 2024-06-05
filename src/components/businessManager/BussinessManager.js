@@ -26,7 +26,7 @@ const BussinessManager = () => {
               <div className="mb-[5px] flex p-2  text-zinc-800 text-lg font-medium">
                 Qr Code
               </div>
-              <Link to="">
+              <Link to="/qrdesign">
                 {" "}
                 <div className="w-[800px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
                   {" "}

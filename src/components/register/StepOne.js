@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
-const EMAIL_REGEX = /^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/;
 
 const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
   const [emailError, setEmailError] = useState(null);
@@ -22,15 +21,15 @@ const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-hero_section ">
-      <div className="bg-white w-[470px] h-[352px] flex-col justify-start items-start inline-flex border rounded-xl absolute right-32 top-20 z-50 shadow-lg">
+    <div className="relative w-full h-screen bg-hero_section flex items-center justify-center">
+      <div className="bg-white w-[470px] h-[352px] flex-col justify-start items-start inline-flex border rounded-xl shadow-lg">
         <div className="w-[374px] h-[50px] mt-[40px] mb-[8px] py-2 justify-start items-center gap-1 inline-flex">
-          <div className=" flex ml-10 grow shrink basis-0 text-zinc-900 text-2xl font-bold font-['Alexandria'] leading-[33.60px]">
+          <div className="flex ml-10 grow shrink basis-0 text-zinc-900 text-2xl font-bold leading-[33.60px]">
             Create Account
           </div>
         </div>
         <div className="font-semibold">
-          <div className="flex mb-[24px] ml-10 text-sm ">
+          <div className="flex mb-[24px] ml-10 text-sm">
             Already Have Account?{" "}
             <Link to="/">
               <span className="ml-1 text-[#E32B87] underline"> Log In</span>
@@ -38,7 +37,7 @@ const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
           </div>
         </div>
         <div>
-          <div className="font-semibold mb-[4px] flex text-sm justify-start ml-10 ">
+          <div className="font-semibold mb-[4px] flex text-sm justify-start ml-10">
             Email Address
           </div>
           <form onSubmit={handleSubmit}>
@@ -56,7 +55,7 @@ const StepOne = ({ nextPage, regEmail, setRegEmail }) => {
             )}
             <button
               type="submit"
-              className="bg-[#E32B87] text-white font-bold py-2 px-4 rounded-xl w-[374px] h-[52px] justify-center items-center text-center -ml-4 "
+              className="bg-[#E32B87] text-white font-bold py-2 px-4 rounded-xl w-[374px] h-[52px] justify-center items-center text-center -ml-4"
             >
               Continue
             </button>
