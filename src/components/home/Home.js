@@ -21,17 +21,17 @@ const Home = () => {
   // Fetch the main data based on page, sortBy, filterBy, and searchTerm
   useEffect(() => {
     axios
-      .get(
-        "http://localhost:4000/menuer/business/dashboard/home",
-        {
-          headers: {
-            Authorization: `Bearer ${auth.data.token}`,
-          },
-        }
-      )
+      .get("http://localhost:4000/menuer/business/dashboard/home", {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
+        },
+      })
       .then((response) => {
         console.log(response, "data");
-        setData(response.data.sections);
+        setData(response.data);
+        console.log(response.data , 'dataaaaaa')
+        console.log(response.data.business.business_name, "Tdasddsad");
+      
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -112,7 +112,9 @@ const Home = () => {
                 dsa
               </div>
               <img className="w-16 h-16 bg-red-800 rounded-2xl" />
-              <div className="h-16 pt-5 ml-2">Name</div>
+              <div className="h-16 pt-5 ml-2">
+                
+              </div>
             </div>
           </div>
 
