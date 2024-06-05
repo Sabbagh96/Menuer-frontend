@@ -4,20 +4,30 @@ import CurrentShift from "./CurrentShift";
 import ShiftOrders from "./ShiftOrders";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { getAuthUser } from "../../helper/Storage";
 
 const CashSystem = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
 
+  const auth = getAuthUser()
+
   useEffect(() => {
     axios
-      .get("http://localhost:4000/menuer/business/dashboard/cashsystem/shift")
+      .get("http://localhost:4000/menuer/business/dashboard/cashsystem/shift",
+      {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`
+        }
+      }
+      )
       .then((response) => {
+        setData(response);
         if (response.status === "fail") {
           navigate("/startnewshift");
         } else {
           navigate("/cash");
-          setData(response.data);
+
         }
       })
       .catch((error) => {

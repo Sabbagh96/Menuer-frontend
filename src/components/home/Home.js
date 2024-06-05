@@ -24,24 +24,14 @@ const Home = () => {
       .get(
         "http://localhost:4000/menuer/business/dashboard/home",
         {
-          params: {
-            page: page,
-            sort: sortBy,
-            filter_by: filterBy,
-            keyword: searchTerm,
-          },
-        },
-        {
-          header: {
-            Authorization: `Bearer ${auth.token}`,
-            Token: auth.token,
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
           },
         }
       )
       .then((response) => {
-        console.log(response.business);
-        totalPages = response.data.total_pages;
-        setData(response);
+        console.log(response, "data");
+        setData(response.data.sections);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -154,7 +144,7 @@ const Home = () => {
           </div>
           {/* Map items here */}
           <div className="w-[870px] grid grid-cols-2 mx-auto gap-4 mt-[36px]">
-            {data.map((item) => (
+            {/* {data.map((item) => (
               <Link to={`/productdetails/${item.id}`} key={item.id}>
                 <div className="w-[400] h-44 p-6 bg-white rounded-3xl border border-slate-500 border-opacity-20 inline-flex justify-start items-start">
                   <div className="w-32 h-32 rounded-2xl bg-red-600"></div>
@@ -168,7 +158,7 @@ const Home = () => {
                   </div>
                 </div>
               </Link>
-            ))}
+            ))}  */}
           </div>
           <div>
             <nav

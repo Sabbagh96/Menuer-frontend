@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { getAuthUser } from "../../helper/Storage";
 const AllSections = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState([]);
 
+  const auth = getAuthUser()
+
   useEffect(() => {
     axios
       .get(`http://localhost:4000/menuer/business/dashboard/menuManger`, {
-        params: {
-          query: searchTerm,
+        headers:{
+          Authorization: `Bearer ${auth.data.token}`
         },
       })
       .then((response) => {
-        console.log(response.sections);
+        console.log(response);
         setData(response.data);
       })
       .catch((error) => {

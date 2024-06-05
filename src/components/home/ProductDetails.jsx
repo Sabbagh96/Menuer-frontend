@@ -75,7 +75,7 @@ export default function ProductDetails() {
   ];
 
   useEffect(() => {
-    fetch("" + id)
+    fetch(`URL/${id}`)
       .then((response) => {
         setData(response.data);
       })
