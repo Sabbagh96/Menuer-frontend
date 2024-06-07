@@ -34,6 +34,7 @@ import ReportDetail from "./components/reports/ReportDetail";
 import ProductDetails from "./components/home/ProductDetails";
 import AccountCreated from "./components/register/AccountCreated";
 import FinancialSettings from "./components/businessManager/ReceiptSettings/FinancialSettings";
+import UserHome from "./User/UsersCompnents/UserHome";
 /* import Home from "./User/UsersCompnents/Home"; */
 function App() {
   return (
@@ -98,7 +99,7 @@ function App() {
 
           {/* User ____________________________________________ */}
 
-          {/* <Route path="/user/home" element={<Home />} /> */}
+          <Route path="/user/home" element={<UserHome />} />
         </Route>
       </Routes>
     </div>

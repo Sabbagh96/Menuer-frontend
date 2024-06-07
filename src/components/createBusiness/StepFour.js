@@ -80,11 +80,7 @@ const StepFour = ({ nextPage }) => {
     }
     console.log("Form Data:", Object.fromEntries(formData.entries()));
     axios
-      .post("", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      .post("", formData)
       .then((response) => {
         // Handle success
         console.log("Response:", response);

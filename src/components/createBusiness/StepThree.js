@@ -56,7 +56,7 @@ const StepThree = ({ nextPage }) => {
 
     axios
       .post("", { category_id: selectedCategory })
-      .then(() => {
+      .then((response) => {
         navigate("/stepfour");
       })
       .catch((error) => {

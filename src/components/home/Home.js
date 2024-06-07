@@ -6,6 +6,10 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const [businessName, setbusinessName] = useState("");
+  const [businessLogo, setbusinessLogo] = useState("");
+  const [businessCover, setbusinessCover] = useState("");
+
   const [buttons, setButtons] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
@@ -16,7 +20,6 @@ const Home = () => {
   let totalPages;
 
   const auth = getAuthUser();
-  console.log(auth.token);
 
   // Fetch the main data based on page, sortBy, filterBy, and searchTerm
   useEffect(() => {
@@ -25,13 +28,20 @@ const Home = () => {
         headers: {
           Authorization: `Bearer ${auth.data.token}`,
         },
+        params: {
+          page: page,
+          sortBy: sortBy,
+          filterBy: filterBy,
+          searchTerm: searchTerm,
+        },
       })
       .then((response) => {
         console.log(response, "data");
         setData(response.data);
-        console.log(response.data , 'dataaaaaa')
-        console.log(response.data.business.business_name, "Tdasddsad");
-      
+        setbusinessName(response.data.business.business_name);
+        setbusinessLogo(response.data.business.business_logo);
+        setbusinessCover(response.data.business.business_cover);
+        console.log(data.business, "Tdasddsad");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -106,15 +116,17 @@ const Home = () => {
         </div>
         <div className="flex-grow">
           <div className="w-full h-[100px] rounded-3xl justify-center items-center inline-flex relative mt-[80px]">
-            <img className="w-[870px] h-[200px] rounded-3xl absolute" src="" />
+            <img
+              className="w-[870px] h-[200px] rounded-3xl absolute"
+              src={businessCover}
+            />
             <div className="absolute inline-flex">
-              <div className="w-16 h-16 rounded-xl absolute -top-14 -inset-80 -right-20 z-50 bg-red-900">
-                dsa
-              </div>
-              <img className="w-16 h-16 bg-red-800 rounded-2xl" />
-              <div className="h-16 pt-5 ml-2">
-                
-              </div>
+              <div className="w-16 h-16 rounded-xl absolute -top-14 -inset-80 -right-20 z-50 bg-red-900"></div>
+              <img
+                src={businessLogo}
+                className="w-16 h-16 bg-red-800 rounded-2xl"
+              />
+              {<div className="h-16 pt-5 ml-2 -mt-7">{businessName}</div>}
             </div>
           </div>
 

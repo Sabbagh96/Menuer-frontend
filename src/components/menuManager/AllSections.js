@@ -6,13 +6,13 @@ const AllSections = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState([]);
 
-  const auth = getAuthUser()
+  const auth = getAuthUser();
 
   useEffect(() => {
     axios
       .get(`http://localhost:4000/menuer/business/dashboard/menuManger`, {
-        headers:{
-          Authorization: `Bearer ${auth.data.token}`
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
         },
       })
       .then((response) => {

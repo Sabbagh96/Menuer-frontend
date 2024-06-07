@@ -1,63 +1,69 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
-import { IoMdArrowDropup } from "react-icons/io";
+import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 import { CiMenuKebab } from "react-icons/ci";
 import { IoIosAddCircle } from "react-icons/io";
-import { IoMdArrowDropdown } from "react-icons/io";
-// import { SectionContext } from "../../context/SectionsProvider";
 import AddItem from "./AddItem";
 import Sections from "./Sections";
 import CreateNewItem from "./CreateNewItem";
-const StepSix = ({ nextPage }) => {
-  // const { items } = useContext(SectionContext);
+import { getAuthUser } from "../../helper/Storage";
 
-  const [isOpen, setIsOpen] = useState(false);
+const StepSix = ({ nextPage }) => {
+  const auth = getAuthUser();
+
+  const [isOpen, setIsOpen] = useState({});
   const [isOpenTwo, setIsOpenTwo] = useState(false);
   const [show, setShow] = useState(false);
   const [showTwo, setShowTwo] = useState(false);
+  const [collections, setCollections] = useState([]);
+  const [items, setItems] = useState([]);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
-  /*Here you will get products  */
-  const [products, setProducts] = useState([]);
-  const [modeldata, setModeldata] = useState([]);
-
-  /* get products from backend */
-  const getData = () => {
-    fetch("")
-      .then((resposne) => resposne.json())
-      .then((res) => setProducts(res));
+  const fetchSections = () => {
+    axios
+      .get(`http://localhost:4000/user-business/collections`, {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
+        },
+      })
+      .then((res) => {
+        setCollections(res.data.collections);
+        setItems(res.data.items);
+      })
+      .catch((err) => {
+        console.error("Error fetching sections:", err);
+      });
   };
 
   useEffect(() => {
-    getData();
+    fetchSections();
   }, []);
 
   const handleShow = (id) => {
+    setSelectedItemId(id);
     setShow(true);
-    axios
-      .get(`/${id}`)
-      .then((response) => {
-        // Assuming setShow is a state setter function
-        setModeldata(response.data); // Assuming setModelData is a state setter function
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
   };
+
   const handleClose = () => {
     setShow(false);
+    setSelectedItemId(null);
   };
+
   const handleCloseTwo = () => {
     setShowTwo(false);
   };
 
-  // Function to handle clicks outside the add section
-
-  // Add event listener for clicks outside the add section
+  const toggleCollection = (id) => {
+    setIsOpen((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
 
   return (
     <div className="bg-hero_section w-full h-screen overflow-auto relative">
-      <div className="absolute w-[470px] h-[688px]  z-20  p-12 bg-white rounded-3xl shadow border border-slate-500 border-opacity-20 flex flex-row items-start gap-6 justify-between right-32 top-5">
+      <div className="absolute w-[470px] h-[688px] z-20 p-12 bg-white rounded-3xl shadow border border-slate-500 border-opacity-20 flex flex-row items-start gap-6 justify-between right-32 top-5">
         <div className="relative">
           <div className="sticky">
             <div className="flex justify-between">
@@ -69,7 +75,7 @@ const StepSix = ({ nextPage }) => {
               </button>
             </div>
             <div className="text-start w-[374px] my-[24px] text-zinc-900 text-2xl font-bold font-['Alexandria'] leading-[33.60px]">
-              Create Bussiness
+              Create Business
             </div>
             <div className="w-[374px] h-1.5 py-0.5 justify-center items-center inline-flex">
               <div className="w-[374px] h-0.5 relative flex-col justify-start items-start flex">
@@ -86,9 +92,8 @@ const StepSix = ({ nextPage }) => {
               </div>
             </div>
           </div>
-          {/* no scroller under this  */}
 
-          <div className="w-[374px] h-[330px] overflow-y-scroll no-scrollbar  flex-col justify-start items-center gap-6 inline-flex">
+          <div className="w-[374px] h-[330px] overflow-y-scroll no-scrollbar flex-col justify-start items-center gap-6 inline-flex">
             <div className="w-[374px] flex justify-start text-zinc-800 text-base font-medium font-['Alexandria'] leading-normal">
               Menu Sections
             </div>
@@ -109,75 +114,97 @@ const StepSix = ({ nextPage }) => {
               </div>
               <div className="grow shrink basis-0 h-px bg-zinc-200 rounded-[90px]" />
             </div>
-            {/* map on items here ----------------------------------------------------  */}
-            <div
-              className={`relative w-[374px] h-[57px] items-center p-4 place-content-center mx-1 bg-white rounded-2xl border border-slate-500 ${
-                isOpen
-                  ? "border-b-transparent rounded-none transition-all duration-500"
-                  : ""
-              } border-opacity-20`}
-            >
-              <button
-                onClick={() => setIsOpen((prev) => !prev)}
-                className="w-[213.50px] h-[10px]  items-center flex justify-between"
+
+            {collections.map((collection) => (
+              <div
+                key={collection._id}
+                className={`relative w-[374px] h-auto items-center my-10 p-4 place-content-center mx-1 bg-white rounded-2xl border border-slate-500 ${
+                  isOpen[collection._id]
+                    ? "border-b-transparent rounded-none transition-all duration-500"
+                    : ""
+                } border-opacity-20`}
               >
-                <div className="flex gap-1">
-                  <div className="text-center text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-                    Created Items
-                  </div>
-                  <div className="text-center text-pink-600 text-sm font-light font-['Alexandria'] leading-[21px]">
-                    ( 3 )
-                  </div>
-                </div>
-                <div on className="flex items-end -mx-28">
-                  {!isOpen ? (
-                    <div className=" flex justify-end">
-                      <span className=" flex justify-end">
-                        <IoMdArrowDropdown />
-                      </span>
+                <button
+                  onClick={() => toggleCollection(collection._id)}
+                  className="w-[213.50px] h-[10px] items-center flex justify-between"
+                >
+                  <div className="flex gap-1">
+                    <div className="text-center text-zinc-900 text-sm font-normal leading-[21px]">
+                      {collection.collection_name}
                     </div>
-                  ) : (
-                    <div>
+                    <div className="text-center text-pink-600 text-sm font-light leading-[21px]">
+                      (
+                      {
+                        items.filter(
+                          (item) => item.collection_id === collection._id
+                        ).length
+                      }
+                      )
+                    </div>
+                  </div>
+                  <div className="flex items-end -mx-28">
+                    {!isOpen[collection._id] ? (
+                      <IoMdArrowDropdown />
+                    ) : (
                       <IoMdArrowDropup />
-                    </div>
-                  )}
-                </div>
-              </button>
-              {isOpen && (
-                <div className="absolute mt-2 top-12 left-0 w-full   h-auto duration-300 flex flex-col border border-t-0 ">
-                  <div className="w-[345px]  h-auto rounded-2xl inline-flex justify-between">
-                    <div className="flex p-2 items-center gap-1 ">
-                      <div className="relative">
-                        <span
-                          onClick={() => setIsOpenTwo((prev) => !prev)}
-                          className="cursor-pointer"
-                        >
-                          <CiMenuKebab />
-                        </span>
-                        {isOpen && isOpenTwo && (
-                          <div className="absolute -left-1 w-[196px] h-[90px] py-2 bg-white rounded-xl shadow border border-zinc-200 flex-col justify-start items-start flex ">
-                            <button>Delete</button>
-                          </div>
-                        )}
-                      </div>
-                      <img className="w-9 h-[27.22px]" />
-                      <span className="  text-zinc-800 text-sm font-normal font-['Alexandria'] leading-[21px]">
-                        Name
-                      </span>
-                    </div>
-                    <div className="flex p-2 items-center">
-                      <span className="items-center content-center">
-                        <IoIosAddCircle />
-                      </span>
-                      <button onClick={handleShow}>Add</button>
-                    </div>
+                    )}
                   </div>
-                  <button onClick={() => setShowTwo(true)}>Create New</button>
-                </div>
-              )}
-            </div>
+                </button>
+                {isOpen[collection._id] && (
+                  <div className="absolute mt-2 top-12 left-0 w-full h-auto duration-300 flex flex-col border border-t-0">
+                    {items
+                      .filter((item) => item.collection_id === collection._id)
+                      .map((item) => (
+                        <div
+                          key={item._id}
+                          className="w-[345px] h-auto rounded-2xl inline-flex m-2 justify-between"
+                        >
+                          <div className="flex p-2 items-center gap-1 ">
+                            <div className="relative">
+                              <span
+                                onClick={() => setIsOpenTwo((prev) => !prev)}
+                                className="cursor-pointer"
+                              >
+                                <CiMenuKebab />
+                              </span>
+                              {isOpen[collection._id] && isOpenTwo && (
+                                <div className="absolute -left-1 w-[196px] h-[90px] py-2 bg-white rounded-xl shadow border border-zinc-200 flex-col justify-start items-start flex">
+                                  <button>Delete</button>
+                                </div>
+                              )}
+                            </div>
+                            <img
+                              src={item.item_image}
+                              alt={item.item_name}
+                              className="w-9 h-[27.22px]"
+                            />
+                            <span className="text-zinc-800 text-sm font-normal leading-[21px]">
+                              {item.item_name}
+                            </span>
+                          </div>
+                          <div className="flex p-2 items-center">
+                            <span className="items-center content-center">
+                              <IoIosAddCircle />
+                            </span>
+                            <button onClick={() => handleShow(item._id)}>
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    <button onClick={() => setShowTwo(true)}>Create New</button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-          {/* no scroller finishes here  */}
+          <button
+            className={
+              "bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl w-10/12 mt-5 mx-auto text-center "
+            }
+          >
+            Continue
+          </button>
         </div>
       </div>
       <Modal size="md" show={showTwo} onHide={handleCloseTwo}>
@@ -191,7 +218,7 @@ const StepSix = ({ nextPage }) => {
       <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <AddItem />
+          <AddItem itemId={selectedItemId} />
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>

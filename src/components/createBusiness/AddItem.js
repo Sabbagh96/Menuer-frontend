@@ -1,69 +1,103 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getAuthUser } from "../../helper/Storage";
 
-const AddItem = () => {
+const AddItem = ({ itemId }) => {
+  const auth = getAuthUser();
   const [displayName, setDisplayName] = useState("");
   const [menuSection, setMenuSection] = useState("");
   const [defaultVariant, setDefaultVariant] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [variantInputs, setVariantInputs] = useState([""]);
+  const [variantInputs, setVariantInputs] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [sections, setSections] = useState([]);
+
+  // Fetch sections
+  const fetchSections = () => {
+    axios
+      .get("http://localhost:4000/menus/business/sections/create-section", {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
+        },
+      })
+      .then((res) => {
+        setSections(res.data.sections);
+      })
+      .catch((err) => {
+        console.error("Error fetching sections:", err);
+      });
+  };
+
+  useEffect(() => {
+    fetchSections();
+
+    if (itemId) {
+      axios
+        .get(`http://localhost:4000/items/${itemId}`, {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        })
+        .then((response) => {
+          const data = response.data.data;
+          setDisplayName(data.item_name);
+          setMenuSection(data.category_id);
+          setDefaultVariant(data.defaultVariant || "");
+          setPrice(data.price);
+          setDescription(data.item_keywords.join(", "));
+          setVariantInputs(
+            Object.entries(data.item_variants || {}).map(([key, value]) => ({
+              key,
+              price: value,
+            }))
+          );
+          setImageFile(data.item_image);
+        })
+        .catch((error) => {
+          console.error("Error fetching item data:", error);
+        });
+    }
+  }, [itemId]);
 
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
-      formData.append("displayName", displayName);
-      formData.append("menuSection", menuSection);
-      formData.append("defaultVariant", defaultVariant);
-      formData.append("price", price);
+      formData.append("item_display_name", displayName);
+      formData.append("section_id", menuSection);
       formData.append("description", description);
-      variantInputs.forEach((variant, index) => {
-        formData.append(`variant_${index + 1}`, variant);
-      });
+      formData.append("item_id", itemId);
+      formData.append("price", price);
 
-      const response = await axios.post("/your-endpoint", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const variants = {};
+      variantInputs.forEach(({ key, price }) => {
+        variants[key] = price;
       });
+      formData.append("item_variants", JSON.stringify(variants));
+
+      const response = await axios.post(
+        "/menuer/business/dashboard/menuManger/add-item",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      );
       console.log("Item added successfully:", response.data);
-      // Optionally reset form fields or perform any other actions after successful submission
     } catch (error) {
       console.error("Error adding item:", error);
     }
   };
 
-  useEffect(() => {
-    if (
-      imageFile &&
-      displayName &&
-      menuSection &&
-      defaultVariant &&
-      price &&
-      description &&
-      variantInputs.length > 0
-    ) {
-      handleSubmit();
-    }
-  }, [
-    imageFile,
-    displayName,
-    menuSection,
-    defaultVariant,
-    price,
-    description,
-    variantInputs,
-  ]);
-
   const handleAddVariant = () => {
-    setVariantInputs([...variantInputs, ""]);
+    setVariantInputs([...variantInputs, { key: "", price: "" }]);
   };
 
-  const handleVariantInputChange = (index, event) => {
+  const handleVariantInputChange = (index, field, value) => {
     const newInputs = [...variantInputs];
-    newInputs[index] = event.target.value;
+    newInputs[index][field] = value;
     setVariantInputs(newInputs);
   };
 
@@ -75,7 +109,6 @@ const AddItem = () => {
     <form
       onSubmit={(e) => e.preventDefault()}
       className="border border-gray-500 rounded-xl"
-      onClick={handleSubmit}
     >
       <div className="flex">
         <div>
@@ -90,7 +123,11 @@ const AddItem = () => {
             <div className="w-20 h-20 border bg-red-700 cursor-pointer">
               {imageFile ? (
                 <img
-                  src={URL.createObjectURL(imageFile)}
+                  src={
+                    typeof imageFile === "string"
+                      ? imageFile
+                      : URL.createObjectURL(imageFile)
+                  }
                   alt="Item"
                   className="w-full h-full object-cover"
                 />
@@ -111,10 +148,19 @@ const AddItem = () => {
               onChange={(e) => setDisplayName(e.target.value)}
             />
             <div>Menu Section </div>
-            <input
+            <select
               value={menuSection}
               onChange={(e) => setMenuSection(e.target.value)}
-            />
+            >
+              <option value="" disabled>
+                Select a section
+              </option>
+              {sections.map((section) => (
+                <option key={section._id} value={section._id}>
+                  {section.section_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex justify-between mx-4">
             <div className="flex flex-col">
@@ -148,12 +194,38 @@ const AddItem = () => {
           {/* Render variant inputs */}
           <div className="mx-4">
             {variantInputs.map((variant, index) => (
-              <div key={index} className="flex flex-col">
-                <div>Variant {index + 1}</div>
-                <input
-                  value={variant}
-                  onChange={(event) => handleVariantInputChange(index, event)}
-                />
+              <div
+                key={index}
+                className="flex justify-between items-center mb-2"
+              >
+                <div className="flex flex-col mr-2">
+                  <div>Variant {index + 1}</div>
+                  <input
+                    className="mt-1"
+                    type="text"
+                    value={variant.key}
+                    onChange={(event) =>
+                      handleVariantInputChange(index, "key", event.target.value)
+                    }
+                    placeholder="Variant name"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <div>Price</div>
+                  <input
+                    className="mt-1"
+                    type="text"
+                    value={variant.price}
+                    onChange={(event) =>
+                      handleVariantInputChange(
+                        index,
+                        "price",
+                        event.target.value
+                      )
+                    }
+                    placeholder="Price"
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -167,6 +239,7 @@ const AddItem = () => {
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleSubmit}
             >
               Add Item
             </button>

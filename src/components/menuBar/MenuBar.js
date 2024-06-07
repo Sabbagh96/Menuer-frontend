@@ -3,6 +3,11 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { NavLink, Outlet } from "react-router-dom";
 import { getAuthUser, removeAuthUser } from "../../helper/Storage";
 import { useNavigate } from "react-router-dom";
+import { RiHome6Fill } from "react-icons/ri";
+import { LuMenuSquare } from "react-icons/lu";
+import { LiaCashRegisterSolid } from "react-icons/lia";
+import { TbReportSearch } from "react-icons/tb";
+import { SiGooglemybusiness } from "react-icons/si";
 
 const MenuBar = () => {
   const [show, setShow] = useState(false);
@@ -13,7 +18,7 @@ const MenuBar = () => {
     navigate("/");
   };
   const auth = getAuthUser();
-  console.log(auth);
+  console.log(auth, "Hvlsldacsldc");
 
   return (
     <div className="">
@@ -26,8 +31,7 @@ const MenuBar = () => {
               <div className="flex-col justify-center items-start inline-flex">
                 <div className="text-zinc-800 text-sm font-normal font-['Alexandria'] leading-[21px]"></div>
                 <div className="text-gray-500 text-xs font-light font-['Alexandria'] leading-[18px]">
-                  {auth.data.first_name } {" "} 
-                  {auth.data.last_name}
+                  {auth.data.email}
                 </div>
               </div>
             </div>
@@ -55,14 +59,11 @@ const MenuBar = () => {
             >
               <div className="self-stretch h-[45px] px-4 py-3 rounded-xl flex-col justify-center items-start gap-3 flex">
                 <div className="justify-start items-center gap-2 inline-flex">
-                  <div className="w-5 h-5 relative" />
+                  <div className="">
+                    <RiHome6Fill />{" "}
+                  </div>
                   <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
                     Home
-                  </div>
-                  <div className="w-4 h-4 bg-pink-600 rounded-full flex-col justify-center items-center inline-flex">
-                    <div className="text-white text-[11px] font-medium font-['Inter'] leading-none">
-                      2
-                    </div>
                   </div>
                 </div>
               </div>
@@ -80,14 +81,11 @@ const MenuBar = () => {
               {" "}
               <div className="self-stretch h-[45px] px-4 py-3 rounded-xl flex-col justify-center items-start gap-3 flex">
                 <div className="justify-start items-center gap-2 inline-flex">
-                  <div className="w-5 h-5 relative rounded-[5px]" />
+                  <div className="w-5 h-5 relative rounded-[5px]">
+                    <LuMenuSquare />
+                  </div>
                   <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
                     Menu Manager
-                  </div>
-                  <div className="w-4 h-4 bg-pink-600 rounded-full flex-col justify-center items-center inline-flex">
-                    <div className="text-white text-[11px] font-medium font-['Inter'] leading-none">
-                      2
-                    </div>
                   </div>
                 </div>
               </div>
@@ -104,14 +102,11 @@ const MenuBar = () => {
               {" "}
               <div className="self-stretch h-[45px] px-4 py-3 rounded-xl flex-col justify-center items-start gap-3 flex">
                 <div className="justify-start items-center gap-2 inline-flex">
-                  <div className="w-5 h-5 relative rounded-[5px]" />
+                  <div className="w-5 h-5 relative rounded-[5px]">
+                    <LiaCashRegisterSolid />
+                  </div>
                   <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
                     Cash System
-                  </div>
-                  <div className="w-4 h-4 bg-pink-600 rounded-full flex-col justify-center items-center inline-flex">
-                    <div className="text-white text-[11px] font-medium font-['Inter'] leading-none">
-                      2
-                    </div>
                   </div>
                 </div>
               </div>
@@ -128,14 +123,11 @@ const MenuBar = () => {
               {" "}
               <div className="self-stretch h-[45px] px-4 py-3 rounded-xl flex-col justify-center items-start gap-3 flex">
                 <div className="justify-start items-center gap-2 inline-flex">
-                  <div className="w-5 h-5 relative rounded-[5px]" />
+                  <div className="w-5 h-5 relative rounded-[5px]">
+                    <TbReportSearch />
+                  </div>
                   <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
                     Reports
-                  </div>
-                  <div className="w-4 h-4 bg-pink-600 rounded-full flex-col justify-center items-center inline-flex">
-                    <div className="text-white text-[11px] font-medium font-['Inter'] leading-none">
-                      2
-                    </div>
                   </div>
                 </div>
               </div>
@@ -152,14 +144,11 @@ const MenuBar = () => {
               {" "}
               <div className="self-stretch h-[45px] px-4 py-3 rounded-xl flex-col justify-center items-start gap-3 flex">
                 <div className="justify-start items-center gap-2 inline-flex">
-                  <div className="w-5 h-5 relative rounded-[5px]" />
+                  <div className="w-5 h-5 relative rounded-[5px]">
+                    <SiGooglemybusiness />
+                  </div>
                   <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
                     Business Manager
-                  </div>
-                  <div className="w-4 h-4 bg-pink-600 rounded-full flex-col justify-center items-center inline-flex">
-                    <div className="text-white text-[11px] font-medium font-['Inter'] leading-none">
-                      2
-                    </div>
                   </div>
                 </div>
               </div>
