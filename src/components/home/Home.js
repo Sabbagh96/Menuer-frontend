@@ -53,7 +53,7 @@ const Home = () => {
       })
       .then((response) => {
         const responseData = response.data;
-        setData(response.data);
+      setData(response.data);
         setBusinessName(response.data.business.business_name);
         setBusinessLogo(response.data.business.business_logo);
         setBusinessCover(response.data.business.business_cover);
