@@ -31,10 +31,10 @@ const BussinessManager = () => {
                 <div className="w-[800px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
                   {" "}
                   <div className="flex gap-2">
-                    <span>I</span>
+                
                     <div>Customize Design</div>
                   </div>
-                  <div>Icon</div>
+                  
                 </div>
               </Link>
             </div>

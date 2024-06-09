@@ -44,7 +44,7 @@ const StepTwo = ({ regEmail }) => {
     // Send POST request
     axios
       .post("http://localhost:4000/auth/signup", {
-        email: regEmail, 
+        email: regEmail,
         first_name: firstName,
         last_name: lastName,
         password: password,
@@ -52,7 +52,7 @@ const StepTwo = ({ regEmail }) => {
       })
       .then((res) => {
         console.log(res);
-        navigate("/accountcreated");
+        navigate("/stepsix");
         setAuthUser(res);
       })
       .catch((error) => {

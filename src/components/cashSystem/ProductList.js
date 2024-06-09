@@ -16,18 +16,22 @@ const ProductList = () => {
   const products = [
     {
       id: 1,
-      name: "Product 1",
+      name: "باستا",
       price: 10,
       variants: ["small", "medium", "large"],
     },
-    { id: 2, name: "Product 2", price: 20, variants: ["regular", "extra"] },
-    { id: 3, name: "Product 3", price: 30, variants: ["standard", "premium"] },
-    { id: 4, name: "Product 4", price: 555, variants: ["s", "deluxse"] },
+    { id: 2, name: "بيتزا", price: 20, variants: ["regular", "extra"] },
     {
-      id: 5,
-      name: "Product 4",
+      id: 3,
+      name: "بيتزا جمبري صوص باربيكيو",
+      price: 30,
+      variants: ["standard", "premium"],
+    },
+    {
+      id: 4,
+      name: "باستا بصوص الموزريلا",
       price: 555,
-      variants: ["bdasdasic", "dedasdluxe"],
+      variants: ["s", "deluxse"],
     },
   ];
 

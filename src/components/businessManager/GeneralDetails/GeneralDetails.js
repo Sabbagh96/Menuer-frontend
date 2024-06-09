@@ -13,19 +13,19 @@ const GeneralDetails = () => {
             <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
               {" "}
               <div className="flex gap-2">
-                <span>Icon</span>
+                
                 <div>Bussiness Details</div>
               </div>
-              <div>Icon</div>
+             
             </div>{" "}
           </Link>
           <Link to={"/contactdetails"}>
             <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
               <div className="flex gap-2">
-                <span>Icon</span>
+                
                 <div>Contact Details</div>
               </div>
-              <div>Icon</div>
+             
             </div>
           </Link>
         </div>

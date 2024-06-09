@@ -13,18 +13,18 @@ const ReceiptSettings = () => {
             <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
               {" "}
               <div className="flex gap-2">
-                <span>Icon</span>
+              
                 <div>Financial Settings</div>
               </div>
-              <div>Icon</div>
+             
             </div>
           </Link>
           <div className="w-[395px] h-[50px] border rounded-2xl px-4 py-6 flex items-center justify-between">
             <div className="flex gap-2">
-              <span>Icon</span>
+             
               <div>Customize Design</div>
             </div>
-            <div>Icon</div>
+           
           </div>
         </div>
       </div>
