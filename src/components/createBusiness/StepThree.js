@@ -1,51 +1,41 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import img1 from "../../assets/restaurant.png";
-import img2 from "../../assets/coffee.png";
-import img3 from "../../assets/juice.png";
-import img4 from "../../assets/iceCream.png";
 import { useNavigate } from "react-router-dom";
+import { getAuthUser, setAuthUser } from "../../helper/Storage";
 
-const StepThree = ({ nextPage }) => {
+const StepThree = () => {
   const [businessCategory, setBusinessCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const BussinessCategory = [
-    {
-      title: "Restaurant",
-      img: img1,
-      id: "1",
-    },
-    {
-      title: "Coffee Shop",
-      img: img2,
-      id: "2",
-    },
-    {
-      title: "Juice Shop",
-      img: img3,
-      id: "3",
-    },
-    {
-      title: "Ice Cream Shop",
-      img: img4,
-      id: "4",
-    },
-  ];
-  console.log(selectedCategory);
+
+  const auth = getAuthUser();
 
   useEffect(() => {
-    axios.get("").then((response) => {
-      const data = response.data;
-      setBusinessCategory(data);
-    });
-  }, []);
+    axios
+      .get("http://localhost:4000/menus/business/categories", {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
+        },
+      })
+      .then((response) => {
+        const data = response.data.data;
+        setBusinessCategory(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+      });
+  }, [auth.data.token]);
 
   const handleCategorySelect = (id) => {
     setSelectedCategory(id);
     setErrorMessage(""); // Clear error message when category is selected
+
+    const updatedAuth = {
+      ...auth,
+      business: { ...auth.business, categories_id: id },
+    };
+    setAuthUser(updatedAuth); // Save selected category to local storage
   };
 
   const handleSubmit = () => {
@@ -54,55 +44,48 @@ const StepThree = ({ nextPage }) => {
       return;
     }
 
-    axios
-      .post("", { category_id: selectedCategory })
-      .then((response) => {
-        navigate("/stepfour");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    navigate("/stepfour");
   };
 
   return (
-    <div className="relative w-full h-screen bg-hero_section ">
-      <div className=" bg-white w-1/3 border rounded-xl h-auto absolute right-32 top-3 z-50 shadow-lg  ">
-        <div className="flex flex-col  ">
+    <div className="relative w-full h-screen bg-hero_section overflow-auto">
+      <div className="bg-white w-1/3 border rounded-xl h-auto absolute right-32 top-3 z-50 shadow-lg">
+        <div className="flex flex-col">
           <h1 className="flex font-bold items-center justify-start ml-6 mt-8">
             Create Business
           </h1>
           <div className="flex font-semibold mt-2 items-center justify-start ml-6 mb-5">
-            <h3 className="text-sm">Choose Bussiness Category</h3>
+            <h3 className="text-sm">Choose Business Category</h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 justify-center items-center mx-auto  w-[374px] h-[340px] overflow-y-scroll no-scrollbar">
-            {BussinessCategory.map((item) => (
+          <div className="grid grid-cols-2 gap-2 justify-center items-center mx-auto w-[374px] h-[340px] overflow-y-scroll no-scrollbar">
+            {businessCategory.map((item) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="cursor-pointer"
-                onClick={() => handleCategorySelect(item.id)}
+                onClick={() => handleCategorySelect(item._id)}
               >
                 <div
                   className={`bg-white w-[181px] h-[159px] mb-2 border ${
-                    selectedCategory === item.id
+                    selectedCategory === item._id
                       ? "border-pink-400 bg-pink-400"
                       : "border-gray-300"
                   } rounded-lg`}
                 >
                   <img
-                    className="object-contain h-24 flex mx-auto mt-2  "
-                    src={item.img}
-                    alt=""
+                    className="object-contain h-24 flex mx-auto mt-2"
+                    src={item.category_image}
+                    alt={item.category_name}
                   />
-
-                  <div>{item.title}</div>
+                  <div className="text-center mt-2">{item.category_name}</div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Display Error Message */}
-         
+          {errorMessage && (
+            <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+          )}
         </div>
 
         <button

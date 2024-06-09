@@ -1,10 +1,43 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { getAuthUser } from "../../../helper/Storage";
+import { useNavigate } from "react-router-dom";
+
 const ContactDetails = () => {
+  const navigate = useNavigate();
+
   const [businessAddress, setBusinessAddress] = useState("");
   const [numbers, setNumbers] = useState([""]);
   const [facebook, setFacebook] = useState("");
   const [instagram, setInstagram] = useState("");
   const [externalLinks, setExternalLinks] = useState([""]);
+  const auth = getAuthUser();
+
+  useEffect(() => {
+    console.log("Fetching business details...");
+    axios
+      .get(
+        "http://localhost:4000/menuer/business/dashboard/businessManger/contact-details",
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        const data = response.data.business;
+        console.log("Fetched data:", data);
+        console.log("Fetched dataaaaaaaaaaaa:", response);
+        setBusinessAddress(data.business_address.join(", "));
+        setNumbers(data.business_mobile);
+        setFacebook(data.business_social_media.facebook);
+        setInstagram(data.business_social_media.instagram);
+        setExternalLinks([data.business_social_media.externallink]);
+      })
+      .catch((error) => {
+        console.error("Error fetching business details:", error);
+      });
+  }, [auth.data.token]);
 
   const handleAddNumber = () => {
     setNumbers([...numbers, ""]);
@@ -34,20 +67,53 @@ const ContactDetails = () => {
     setExternalLinks(updatedLinks);
   };
 
+  const handleSaveChanges = () => {
+    const updatedData = {
+      business_address: businessAddress.split(", "),
+      business_mobile: numbers,
+      business_social_media: {
+        facebook,
+        instagram,
+        externallink: externalLinks.join(", "),
+      },
+    };
+
+    axios
+      .put(
+        "http://localhost:4000/menuer/business/dashboard/businessManger/contact-details",
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        navigate("/businessmanager");
+        console.log("Business details updated successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating business details:", error);
+      });
+  };
+
   return (
     <div className="mx-auto justify-center place-content-center items-center">
       <div className="w-[960px] mt-[56.5px] mb-[20px] flex justify-between mx-auto px-4 ">
-        <div className=" text-zinc-800  text-lg font-medium font-['Alexandria'] leading-[27px]">
+        <div className="text-zinc-800 text-lg font-medium font-['Alexandria'] leading-[27px]">
           General Details - Business Details
         </div>
-        <button className="w-[150px] h-11 border shadow-2xl rounded-[20px] border-slate-500 border-opacity-20 justify-center items-center gap-2 text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]">
+        <button
+          onClick={handleSaveChanges}
+          className="w-[150px] h-11 border shadow-2xl rounded-[20px] border-slate-500 border-opacity-20 justify-center items-center gap-2 text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]"
+        >
           Save Changes
         </button>
       </div>
 
-      <div className="w-[960px] border shadow-xl rounded-xl h-auto mt-[35px] mb-6  flex justify-between mx-auto px-4 flex-col p-8">
+      <div className="w-[960px] border shadow-xl rounded-xl h-auto mt-[35px] mb-6 flex justify-between mx-auto px-4 flex-col p-8">
         <div className="w-full h-[21px] px-1 justify-between items-start inline-flex">
-          <div className="grow shrink basis-0  h-[21px] justify-start items-center gap-1 flex">
+          <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
             <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
               Business Address
             </div>
@@ -65,7 +131,7 @@ const ContactDetails = () => {
           onChange={(e) => setBusinessAddress(e.target.value)}
         />
 
-        <div className="w-fullh-[21px] px-1 justify-between items-start inline-flex mt-4">
+        <div className="w-full h-[21px] px-1 justify-between items-start inline-flex mt-4">
           <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
             Mobile Number
           </div>
@@ -90,7 +156,7 @@ const ContactDetails = () => {
         <div className="flex justify-center text-lg mt-2 ">
           <button
             onClick={handleAddNumber}
-            className="text-center text-pink-600 mt-1 text-sm font-medium font-['Alexandria'] leading-[21px] "
+            className="text-center text-pink-600 mt-1 text-sm font-medium font-['Alexandria'] leading-[21px]"
           >
             Add Number
           </button>
@@ -150,7 +216,7 @@ const ContactDetails = () => {
         <div className="flex justify-center text-lg mt-2 mb-3">
           <button
             onClick={handleAddLink}
-            className="text-center text-pink-600 text-sm m-1 font-medium font-['Alexandria'] leading-[21px] "
+            className="text-center text-pink-600 text-sm m-1 font-medium font-['Alexandria'] leading-[21px]"
           >
             Add Link
           </button>

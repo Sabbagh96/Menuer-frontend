@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { setAuthUser } from "../../helper/Storage";
 
 const StepTwo = ({ regEmail }) => {
   const [firstName, setFirstName] = useState("");
@@ -52,6 +53,7 @@ const StepTwo = ({ regEmail }) => {
       .then((res) => {
         console.log(res);
         navigate("/accountcreated");
+        setAuthUser(res);
       })
       .catch((error) => {
         console.error(error);

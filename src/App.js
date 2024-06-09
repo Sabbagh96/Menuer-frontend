@@ -19,13 +19,12 @@ import StepThree from "./components/createBusiness/StepThree";
 import BussinessManager from "./components/businessManager/BussinessManager";
 import QrDesign from "./components/businessManager/QrCode/QrDesign";
 import ActiveMembers from "./components/businessManager/Stuff/ActiveMembers";
-import AddNew from "./components/businessManager/Stuff/AddNew";
+import AddNewTest from "./components/businessManager/Stuff/AddNewTest";
 import BusinessDetails from "./components/businessManager/GeneralDetails/BusinessDetails";
 import ContactDetails from "./components/businessManager/GeneralDetails/ContactDetails";
 import AddItem from "./components/createBusiness/AddItem";
 import NoBuisness from "./components/NoBuisness";
 import AllSections from "./components/menuManager/AllSections";
-import SectionDetails from "./components/menuManager/SectionDetails";
 import ProductList from "./components/cashSystem/ProductList";
 import StartNewShift from "./components/cashSystem/start-new-shift/StartNewShift";
 import ReceiptDetails from "./components/cashSystem/ReceiptDetail";
@@ -35,6 +34,7 @@ import ProductDetails from "./components/home/ProductDetails";
 import AccountCreated from "./components/register/AccountCreated";
 import FinancialSettings from "./components/businessManager/ReceiptSettings/FinancialSettings";
 import UserHome from "./User/UsersCompnents/UserHome";
+import MenuManagerAddItem from "./components/menuManager/MenuManagerAddItem";
 /* import Home from "./User/UsersCompnents/Home"; */
 function App() {
   return (
@@ -71,11 +71,11 @@ function App() {
           <Route path="/businessdetails" element={<BusinessDetails />} />
           <Route path="/contactdetails" element={<ContactDetails />} />
           <Route path="/qrdesign" element={<QrDesign />} />
-          <Route path="/addnew" element={<AddNew />} />
+          <Route path="/addnew" element={<AddNewTest />} />
           <Route path="/financialsettings" element={<FinancialSettings />} />
 
           <Route path="/allsections" element={<AllSections />} />
-          <Route path="/sectiondetails" element={<SectionDetails />} />
+          <Route path="/menumanageradditem" element={<MenuManagerAddItem />} />
 
           <Route path="/reports" element={<Report />} />
           <Route path="/reportdetail/:id" element={<ReportDetail />} />

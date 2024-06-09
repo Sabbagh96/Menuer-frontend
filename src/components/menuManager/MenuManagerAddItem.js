@@ -4,13 +4,13 @@ import Modal from "react-bootstrap/Modal";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 import { CiMenuKebab } from "react-icons/ci";
 import { IoIosAddCircle } from "react-icons/io";
-import AddItem from "./AddItem";
-import Sections from "./Sections";
-import CreateNewItem from "./CreateNewItem";
+import AddItem from "../createBusiness/AddItem";
+import Sections from "../createBusiness/Sections";
+import CreateNewItem from "../createBusiness/CreateNewItem";
 import { getAuthUser } from "../../helper/Storage";
 import { Link } from "react-router-dom";
 
-const StepSix = ({ nextPage }) => {
+const MenuManagerAddItem = () => {
   const auth = getAuthUser();
 
   const [isOpen, setIsOpen] = useState({});
@@ -31,7 +31,7 @@ const StepSix = ({ nextPage }) => {
       .then((res) => {
         setCollections(res.data.collections);
         setItems(res.data.items);
-       /*  console.log(
+        /*  console.log(
           res.data.items,
           "This is the iteeeeeeeeeeeeeeeeeeeeeeeemmmmmmmmmmmms"
         ); */
@@ -65,31 +65,15 @@ const StepSix = ({ nextPage }) => {
       [id]: !prevState[id],
     }));
   };
-
   return (
     <div className="bg-hero_section w-full h-screen overflow-auto relative">
-      <div className="absolute w-[470px] h-[688px] z-20 p-12 bg-white rounded-3xl shadow border border-slate-500 border-opacity-20 flex flex-row items-start gap-6 justify-between right-32 top-5">
+      <div className="absolute w-[850px] h-[688px] z-20 p-12 bg-white rounded-3xl shadow border border-slate-500 border-opacity-20 flex flex-row items-start gap-6 justify-between right-32 top-5">
         <div className="relative">
           <div className="sticky">
-            <div className="flex justify-between">
-              <button className="text-start text-gray-500 text-sm font-medium font-['Alexandria'] leading-[21px] w-[187px] h-[20px]">
-                Back
-              </button>
-              <button className="text-end text-gray-500 text-sm font-medium font-['Alexandria'] leading-[21px] w-[187px] h-[20px]">
-                Add Later
-              </button>
-            </div>
-            <div className="text-start w-[374px] my-[24px] text-zinc-900 text-2xl font-bold font-['Alexandria'] leading-[33.60px]">
-              Create Business
-            </div>
-            <div className="w-[374px] h-1.5 py-0.5 justify-center items-center inline-flex">
-              <div className="w-[374px] h-0.5 relative flex-col justify-start items-start flex">
-                <div className="w-[374px] h-0.5 bg-zinc-200 rounded-full" />
-                <div className="w-[280.50px] h-0.5 bg-pink-600 rounded-full" />
-              </div>
-            </div>
+         
+            
 
-            <div className="w-[374px] h-[38px] justify-start items-center gap-1 inline-flex mb-[24px] mt-[20px]">
+            <div className="w-[750px] h-[38px] justify-start items-center gap-1 inline-flex mb-[24px] mt-[20px]">
               <div className="grow shrink basis-0 h-[27px] justify-start items-center gap-1 flex">
                 <div className="text-zinc-800 text-lg font-medium font-['Alexandria'] leading-[27px]">
                   Modify Your Menu
@@ -98,7 +82,7 @@ const StepSix = ({ nextPage }) => {
             </div>
           </div>
 
-          <div className="w-[374px] h-[330px] overflow-y-scroll no-scrollbar flex-col justify-start items-center gap-6 inline-flex">
+          <div className="w-[750px]  h-[330px] overflow-y-scroll no-scrollbar flex-col justify-start items-center gap-6 inline-flex">
             <div className="w-[374px] flex justify-start text-zinc-800 text-base font-medium font-['Alexandria'] leading-normal">
               Menu Sections
             </div>
@@ -203,14 +187,7 @@ const StepSix = ({ nextPage }) => {
               </div>
             ))}
           </div>
-          <Link
-            to={"/home"}
-            className={
-              "bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl w-10/12 mt-5 mx-auto text-center "
-            }
-          >
-            Continue
-          </Link>
+
         </div>
       </div>
       <Modal size="md" show={showTwo} onHide={handleCloseTwo}>
@@ -232,4 +209,4 @@ const StepSix = ({ nextPage }) => {
   );
 };
 
-export default StepSix;
+export default MenuManagerAddItem;

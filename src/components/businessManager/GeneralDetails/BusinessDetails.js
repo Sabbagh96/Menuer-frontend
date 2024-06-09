@@ -1,70 +1,121 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import logo from "../../../assets/AddLogo.png";
 import cover from "../../../assets/cover.png";
-import { useRef, useState } from "react";
+import { getAuthUser } from "../../../helper/Storage";
+import { useNavigate } from "react-router-dom";
+
 const BusinessDetails = () => {
+  const navigate = useNavigate();
+
+  const auth = getAuthUser();
   const [businessName, setBusinessName] = useState("");
   const [businessSlogan, setBusinessSlogan] = useState("");
   const [imageOne, setImageOne] = useState(null);
   const [imageTwo, setImageTwo] = useState(null);
-  console.log(imageOne, imageTwo);
+  const [initialImageOne, setInitialImageOne] = useState("");
+  const [initialImageTwo, setInitialImageTwo] = useState("");
 
   const inputRefOne = useRef(null);
   const inputRefTwo = useRef(null);
 
+  useEffect(() => {
+    axios
+      .get(
+        "http://localhost:4000/menuer/business/dashboard/businessManger/general-details",
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        const business = response.data.business;
+        setBusinessName(business.business_name);
+        setBusinessSlogan(business.business_slogan);
+        setInitialImageOne(business.business_logo);
+        setInitialImageTwo(business.business_cover);
+        setImageOne(business.business_logo);
+        setImageTwo(business.business_cover);
+      })
+      .catch((error) => {
+        console.error("Error fetching business details:", error);
+      });
+  }, [auth.data.token]);
+
   const handleImageOneClick = () => {
     inputRefOne.current.click();
   };
+
   const handleImageTwoClick = () => {
     inputRefTwo.current.click();
   };
+
   const handleImageOneChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
     setImageOne(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setInitialImageOne(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
+
   const handleImageTwoChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
     setImageTwo(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setInitialImageTwo(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const formData = new FormData();
-    formData.append("businessName", businessName);
-    formData.append("businessSlogan", businessSlogan);
-    formData.append("imageOne", imageOne);
-    formData.append("imageTwo", imageTwo);
+    formData.append("business_name", businessName);
+    formData.append("business_slogan", businessSlogan);
+    if (imageOne) formData.append("business_logo", imageOne);
+    if (imageTwo) formData.append("business_cover", imageTwo);
 
-    axios
-      .post("", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        // Handle success
-        console.log("Response:", response);
-      })
-      .catch((error) => {
-        // Handle error
-        console.error("Error:", error);
-      });
+    try {
+      const response = await axios.put(
+        "http://localhost:4000/menuer/business/dashboard/businessManger/general-details",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      );
+      /* console.log("Response:", response);
+      console.log("FormData:", formData); */
+      navigate("/businessmanager");
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
-  return (
-    <div className="mx-auto justify-center place-content-center items-center">
-      <div className="w-[960px] mt-[56.5px] mb-[20px] flex justify-between mx-auto px-4 ">
-        <div className=" text-zinc-800  text-lg font-medium font-['Alexandria'] leading-[27px]">
-          General Details - Business Details
-        </div>
-        <button className="w-[150px] h-11 border shadow-2xl rounded-[20px] border-slate-500 border-opacity-20 justify-center items-center gap-2 text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]">
-          Save Changes
-        </button>
-      </div>
 
-      <div className="w-[960px] border shadow-xl rounded-xl h-auto mt-[35px] mb-6  flex justify-between mx-auto px-4 flex-col">
-        <form onSubmit={handleSubmit}>
-          <div className="">
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mx-auto justify-center place-content-center items-center">
+        <div className="w-[960px] mt-[56.5px] mb-[20px] flex justify-between mx-auto px-4">
+          <div className="text-zinc-800 text-lg font-medium font-['Alexandria'] leading-[27px]">
+            General Details - Business Details
+          </div>
+          <button
+            type="submit"
+            className="w-[150px] h-11 border shadow-2xl rounded-[20px] border-slate-500 border-opacity-20 justify-center items-center gap-2 text-zinc-900 text-sm font-medium font-['Alexandria'] leading-[21px]"
+          >
+            Save Changes
+          </button>
+        </div>
+
+        <div className="w-[960px] border shadow-xl rounded-xl h-auto mt-[35px] mb-6 flex justify-between mx-auto px-4 flex-col">
+          <div>
             <div className="flex flex-col px-6 py-3">
               <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex">
                 <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
@@ -88,8 +139,8 @@ const BusinessDetails = () => {
                     Business Slogan
                   </div>
                 </div>
-                <div className=" items-center gap-1 flex">
-                  <div className="text-center  text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
+                <div className="items-center gap-1 flex">
+                  <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
                     Optional
                   </div>
                 </div>
@@ -109,15 +160,17 @@ const BusinessDetails = () => {
                 onClick={handleImageOneClick}
                 className="flex flex-col w-32 mt-2 ml-6"
               >
-                {imageOne ? (
-                  <img
-                    className="w-32 border rounded-xl"
-                    src={URL.createObjectURL(imageOne)}
-                    alt=""
-                  />
-                ) : (
-                  <img className="w-32" src={logo} />
-                )}
+                <img
+                  className="w-32 border rounded-xl"
+                  src={
+                    initialImageOne
+                      ? initialImageOne
+                      : `http://localhost:4000/business/logos/${imageOne}`
+                      ? `http://localhost:4000/business/logos/${imageOne}`
+                      : logo
+                  }
+                  alt="Business Logo"
+                />
                 <input
                   type="file"
                   ref={inputRefOne}
@@ -130,15 +183,17 @@ const BusinessDetails = () => {
                 onClick={handleImageTwoClick}
                 className="flex flex-col w-96 mt-2 ml-6"
               >
-                {imageTwo ? (
-                  <img
-                    className="w-96 h-36 border rounded-xl"
-                    src={URL.createObjectURL(imageTwo)}
-                    alt=""
-                  />
-                ) : (
-                  <img className="w-11/12 " src={cover} />
-                )}
+                <img
+                  className="w-96 h-36 border rounded-xl"
+                  src={
+                    initialImageTwo
+                      ? initialImageTwo
+                      : `http://localhost:4000/business/covers/${imageTwo}`
+                      ? `http://localhost:4000/business/covers/${imageTwo}`
+                      : cover
+                  }
+                  alt="Business Cover"
+                />
                 <input
                   type="file"
                   ref={inputRefTwo}
@@ -148,9 +203,9 @@ const BusinessDetails = () => {
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </form>
   );
 };
 

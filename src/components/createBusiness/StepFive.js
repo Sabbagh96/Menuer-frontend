@@ -1,242 +1,254 @@
-import React, { useState } from "react";
-import axios from "axios";
-
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { getAuthUser, setAuthUser } from "../../helper/Storage";
 
-const StepFive = ({ nextPage }) => {
+const StepFive = () => {
   const [businessAddress, setBusinessAddress] = useState("");
-  const [numbers, setNumbers] = useState([""]);
   const [facebook, setFacebook] = useState("");
   const [instagram, setInstagram] = useState("");
-  const [externalLinks, setExternalLinks] = useState([""]);
-
+  const [externalLink, setExternalLink] = useState("");
+  const [categoriesId, setCategoriesId] = useState("");
+  const [businessMobile, setBusinessMobile] = useState([""]);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleAddNumber = () => {
-    setNumbers([...numbers, ""]);
+  useEffect(() => {
+    const auth = getAuthUser();
+    if (auth && auth.business) {
+      setBusinessAddress(auth.business.business_address || "");
+      setCategoriesId(auth.business.categories_id || "");
+      setFacebook(auth.business.business_social_media.facebook || "");
+      setInstagram(auth.business.business_social_media.instagram || "");
+      setExternalLink(auth.business.business_social_media.externallink || "");
+      setBusinessMobile(auth.business.business_mobile || [""]);
+    }
+  }, []);
+
+  const updateAuthUser = (updates) => {
+    const auth = getAuthUser();
+    const updatedAuth = {
+      ...auth,
+      business: {
+        ...auth.business,
+        ...updates,
+      },
+    };
+    setAuthUser(updatedAuth);
   };
 
-  const handleAddLink = () => {
-    setExternalLinks([...externalLinks, ""]);
+  const handleBusinessMobileChange = (index, value) => {
+    const newMobileNumbers = [...businessMobile];
+    newMobileNumbers[index] = value;
+    setBusinessMobile(newMobileNumbers);
+    updateAuthUser({ business_mobile: newMobileNumbers });
   };
 
-  const handleNumberChange = (index, value) => {
-    const updatedNumbers = [...numbers];
-    updatedNumbers[index] = value;
-    setNumbers(updatedNumbers);
+  const addBusinessMobile = () => {
+    const newMobileNumbers = [...businessMobile, ""];
+    setBusinessMobile(newMobileNumbers);
+    updateAuthUser({ business_mobile: newMobileNumbers });
   };
 
-  const handleFacebookChange = (e) => {
-    setFacebook(e.target.value);
+  const removeBusinessMobile = (index) => {
+    const newMobileNumbers = businessMobile.filter((_, i) => i !== index);
+    setBusinessMobile(newMobileNumbers);
+    updateAuthUser({ business_mobile: newMobileNumbers });
   };
 
-  const handleInstagramChange = (e) => {
-    setInstagram(e.target.value);
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleLinkChange = (index, value) => {
-    const updatedLinks = [...externalLinks];
-    updatedLinks[index] = value;
-    setExternalLinks(updatedLinks);
-  };
+    if (!businessAddress.trim()) {
+      setErrorMessage("Please enter the business address.");
+      return;
+    }
 
-  const handlePostData = async () => {
+    if (businessMobile.some((mobile) => !mobile.trim())) {
+      setErrorMessage("Please enter valid mobile numbers.");
+      return;
+    }
+
+    setErrorMessage("");
+
+    const auth = getAuthUser();
+    const formData = new FormData();
+
+    // Append fields to formData
+    formData.append("business_name", auth.business.business_name);
+    formData.append("business_slogan", auth.business.business_slogan);
+    formData.append("business_logo", auth.business.business_logo);
+    formData.append("business_cover", auth.business.business_cover);
+    formData.append("business_address", businessAddress);
+    formData.append("categories_id", categoriesId);
+
+    // Append each mobile number
+    businessMobile.forEach((mobile, index) => {
+      formData.append(`business_mobile[${index}]`, mobile);
+    });
+
+    // Append social media links
+    formData.append("business_social_media[facebook]", facebook);
+    formData.append("business_social_media[instagram]", instagram);
+    formData.append("business_social_media[externallink]", externalLink);
+
     try {
-      const postData = {}; // Object to hold the data to be posted
-
-      // Check if business address is provided
-      if (businessAddress.trim()) {
-        postData["business-Address"] = businessAddress.trim();
-      }
-
-      // Check if any numbers are provided
-      if (numbers.some((num) => num.trim())) {
-        postData["phone-Numbers"] = numbers
-          .map((num) => num.trim())
-          .filter(Boolean);
-      }
-
-      // Check if Facebook URL is provided
-      if (facebook.trim()) {
-        postData["facebook-URL"] = facebook.trim();
-      }
-
-      // Check if Instagram URL is provided
-      if (instagram.trim()) {
-        postData["instagram-URL"] = instagram.trim();
-      }
-
-      // Check if any external links are provided
-      if (externalLinks.some((link) => link.trim())) {
-        postData["external-Links"] = externalLinks
-          .map((link) => link.trim())
-          .filter(Boolean);
-      }
-
-      // Check if there's any data to post
-      if (Object.keys(postData).length > 0) {
-        // Post the data
-        await axios.post("/api/addData", postData);
-
-        // Navigate to the next step
-        navigate("/stepsix");
-      } else {
-        // If no data provided, simply navigate to the next step
-        navigate("/stepsix");
-      }
+      const response = await axios.post(
+        "http://localhost:4000/business/create-business",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      );
+      console.log(response);
+      navigate("/stepsix");
     } catch (error) {
-      console.error("Error posting data:", error);
+      console.error(error);
+      setErrorMessage("Failed to create business.");
     }
   };
 
-
+  const isDisabled =
+    !businessAddress.trim() || businessMobile.some((mobile) => !mobile.trim());
   return (
-    <div className="relative w-full h-screen bg-hero_section overflow-auto">
-      <div className="bg-white w-1/3 border rounded-xl min-h-auto max-h-auto absolute right-32 top-1 inset-50 z-50 shadow-lg">
-        <div className="mt-8 flex ml-10 text-xl font-bold mx-auto">
-          Create Account
-        </div>
-        <div className="w-1/3 h-1.5 py-0.5 justify-center items-center inline-flex">
-          <div className="w-[374px] h-0.5 relative flex-col justify-start items-start flex">
-            <div className="w-[374px] h-0.5 bg-zinc-200 rounded-full" />
-            <div className="w-[187px] h-0.5 bg-pink-600 rounded-full" />
+    <form onSubmit={handleSubmit}>
+      <div className="relative w-full h-screen bg-hero_section overflow-auto">
+        <div className="bg-white w-4/12 border rounded-xl min-h-96 absolute right-32 top-5 z-50 shadow-lg my-4">
+          <div className="w-[374px] text-zinc-900 text-2xl font-bold font-['Alexandria'] leading-[33.60px] my-1 mx-auto">
+            Create Business
           </div>
-        </div>
-        <div className="w-[374px] h-9 justify-start items-center gap-1 inline-flex">
-          <div className="grow shrink basis-0 h-[27px] justify-start items-center gap-1 flex">
-            <div className="text-zinc-800 text-lg font-medium font-['Alexandria'] leading-[27px]">
-              Add Contact Details
+          <div className="w-[374px] h- py-0.5 justify-center items-center inline-flex">
+            <div className="w-[374px] h-0.5 relative flex-col justify-start items-start flex">
+              <div className="w-[374px] h-0.5 bg-zinc-200 rounded-full" />
+              <div className="w-[93.50px] h-0.5 bg-pink-600 rounded-full" />
             </div>
           </div>
-          <div className="justify-start items-start flex">
-            <div className="p-2 rounded-3xl justify-center items-center gap-2 flex">
-              <div className="w-[31px] justify-center items-center gap-1 flex">
-                <div className="text-center text-gray-500 text-sm font-medium font-['Alexandria'] leading-[21px]">
-                  Skip
-                </div>
+
+          {/* Business Address Input */}
+          <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex">
+            <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
+              <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
+                Business Address
               </div>
             </div>
           </div>
-        </div>
+          <input
+            className="w-[374px] h-14 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
+            type="text"
+            placeholder="Business Address"
+            value={businessAddress}
+            onChange={(e) => {
+              setBusinessAddress(e.target.value);
+              updateAuthUser({ business_address: e.target.value });
+            }}
+            required
+          />
 
-        <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex">
-          <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
-            <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-              Business Address
+          {/* Mobile Numbers */}
+          <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-3">
+            <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
+              <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
+                Business Mobile
+              </div>
+            </div>
+            <button
+              type="button"
+              className="text-[#E32B87] text-sm font-normal font-['Alexandria'] leading-[21px]"
+              onClick={addBusinessMobile}
+            >
+              + Add Mobile
+            </button>
+          </div>
+          {businessMobile.map((mobile, index) => (
+            <div key={index} className="flex items-center mb-2">
+              <input
+                className="w-[90%] h-14 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
+                type="text"
+                placeholder="Mobile Number"
+                value={mobile}
+                onChange={(e) =>
+                  handleBusinessMobileChange(index, e.target.value)
+                }
+                required
+              />
+              {businessMobile.length > 1 && (
+                <button
+                  type="button"
+                  className="text-red-500 ml-2"
+                  onClick={() => removeBusinessMobile(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+
+          {/* Social Media Links */}
+          <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-3">
+            <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
+              <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
+                Facebook Link
+              </div>
             </div>
           </div>
-          <div className="justify-center items-center gap-1 flex">
-            <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
-              Optional
+          <input
+            className="w-[374px] h-14 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
+            type="text"
+            placeholder="Facebook Link"
+            value={facebook}
+            onChange={(e) => {
+              setFacebook(e.target.value);
+              updateAuthUser({
+                business_social_media: {
+                  ...getAuthUser().business.business_social_media,
+                  facebook: e.target.value,
+                },
+              });
+            }}
+          />
+
+          <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-3">
+            <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-1 flex">
+              <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
+                Instagram Link
+              </div>
             </div>
           </div>
-        </div>
-        <input
-          className="w-[374px] h-10 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
-          placeholder="Enter Business Address"
-          value={businessAddress}
-          onChange={(e) => setBusinessAddress(e.target.value)}
-        />
+          <input
+            className="w-[374px] h-14 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
+            type="text"
+            placeholder="Instagram Link"
+            value={instagram}
+            onChange={(e) => {
+              setInstagram(e.target.value);
+              updateAuthUser({
+                business_social_media: {
+                  ...getAuthUser().business.business_social_media,
+                  instagram: e.target.value,
+                },
+              });
+            }}
+          />
 
-        <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4">
-          <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-            Mobile Number
-          </div>
-          <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
-            Optional
-          </div>
-        </div>
+          {errorMessage && (
+            <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+          )}
 
-        {numbers.map((number, index) => (
-          <div
-            key={index}
-            className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4"
-          >
-            <input
-              className="w-[374px] h-10 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
-              placeholder="+02 101000000"
-              value={number}
-              onChange={(e) => handleNumberChange(index, e.target.value)}
-            />
-          </div>
-        ))}
-        <div className="flex justify-center text-lg mt-2 ">
+          {/* Submit Button */}
           <button
-            onClick={handleAddNumber}
-            className="text-center text-pink-600 text-sm font-medium font-['Alexandria'] leading-[21px] "
+            type="submit"
+            className={`bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl w-10/12 mt-5 mx-auto text-center ${
+              isDisabled ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isDisabled}
           >
-            Add Number
+            Create Business
           </button>
         </div>
-
-        <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4">
-          <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-            Facebook
-          </div>
-          <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
-            Optional
-          </div>
-        </div>
-        <input
-          className="w-[374px] h-10 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
-          placeholder="FB.com/Cavas"
-          value={facebook}
-          onChange={handleFacebookChange}
-        />
-
-        <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4">
-          <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-            Instagram
-          </div>
-          <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
-            Optional
-          </div>
-        </div>
-        <input
-          className="w-[374px] h-10 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
-          placeholder="Instagram.com/Cavas"
-          value={instagram}
-          onChange={handleInstagramChange}
-        />
-
-        <div className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4">
-          <div className="text-zinc-900 text-sm font-normal font-['Alexandria'] leading-[21px]">
-            External Links
-          </div>
-          <div className="text-center text-neutral-400 text-sm font-light font-['Alexandria'] leading-[21px]">
-            Optional
-          </div>
-        </div>
-        {externalLinks.map((link, index) => (
-          <div
-            key={index}
-            className="w-[374px] h-[21px] px-1 justify-between items-start inline-flex mt-4"
-          >
-            <input
-              className="w-[374px] h-10 p-4 bg-white rounded-2xl border border-zinc-200 justify-center items-start inline-flex"
-              placeholder="https://example.com"
-              value={link}
-              onChange={(e) => handleLinkChange(index, e.target.value)}
-            />
-          </div>
-        ))}
-        <div className="flex justify-center text-lg mt-2 mb-3">
-          <button
-            onClick={handleAddLink}
-            className="text-center text-pink-600 text-sm font-medium font-['Alexandria'] leading-[21px] "
-          >
-            Add Link
-          </button>
-        </div>
-
-        <button
-          onClick={handlePostData}
-          className="bg-[#E32B87] mb-6 text-white font-bold py-2 px-4 rounded-xl  w-10/12 mt-5 mx-auto text-center "
-        >
-          Continue
-        </button>
       </div>
-    </div>
+    </form>
   );
 };
 

@@ -17,27 +17,6 @@ const Sections = () => {
   const [selectedSectionId, setSelectedSectionId] = useState(null);
   const addSectionRef = useRef(null);
 
-  const fetchSections = () => {
-    axios
-      .get("http://localhost:4000/menus/business/sections/create-section", {
-        headers: {
-          Authorization: `Bearer ${auth.data.token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res, "Sectiooooooooooons");
-        setGetSections(res.data.sections); // Update the getSections state
-        console.log(res.data.sections, "that's the section");
-      })
-      .catch((err) => {
-        console.error("Error fetching sections:", err);
-      });
-  };
-
-  useEffect(() => {
-    fetchSections(); // Call fetchSections when the component mounts
-  }, []);
-
   const handleShow = (id) => {
     setSelectedSectionId(id);
     setShow(true);
@@ -88,11 +67,31 @@ const Sections = () => {
         }
       )
       .then((res) => {
-        console.log(res);
-        setAddSection(false);
+        /*         console.log(res);
+         */ setAddSection(false);
       })
       .catch((err) => console.log(err));
   };
+  const fetchSections = () => {
+    axios
+      .get("http://localhost:4000/menus/business/sections/create-section", {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
+        },
+      })
+      .then((res) => {
+        /*         console.log(res, "Sectiooooooooooons");
+         */ setGetSections(res.data.sections); // Update the getSections state
+        /*  console.log(res.data.sections, "that's the section"); */
+      })
+      .catch((err) => {
+        console.error("Error fetching sections:", err);
+      });
+  };
+
+  useEffect(() => {
+    fetchSections(); // Call fetchSections when the component mounts
+  }, [handleCreateSection, addSection]);
 
   const settings = {
     dots: false,

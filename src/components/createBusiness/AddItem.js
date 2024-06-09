@@ -62,23 +62,24 @@ const AddItem = ({ itemId }) => {
 
   const handleSubmit = async () => {
     try {
-      const formData = new FormData();
-      formData.append("image", imageFile);
-      formData.append("item_display_name", displayName);
-      formData.append("section_id", menuSection);
-      formData.append("description", description);
-      formData.append("item_id", itemId);
-      formData.append("price", price);
-
       const variants = {};
       variantInputs.forEach(({ key, price }) => {
         variants[key] = price;
       });
-      formData.append("item_variants", JSON.stringify(variants));
+
+      const payload = {
+        item_display_name: displayName,
+        section_id: menuSection,
+        description: description,
+        item_id: itemId,
+        price: price,
+        item_variants: variants,
+      };
+      console.log(payload);
 
       const response = await axios.post(
-        "/menuer/business/dashboard/menuManger/add-item",
-        formData,
+        "http://localhost:4000/menuer/business/dashboard/menuManger/add-item",
+        payload,
         {
           headers: {
             Authorization: `Bearer ${auth.data.token}`,
@@ -103,6 +104,11 @@ const AddItem = ({ itemId }) => {
 
   const handleImageChange = (event) => {
     setImageFile(event.target.files[0]);
+  };
+
+  const handleMenuSectionChange = (e) => {
+    setMenuSection(e.target.value);
+    console.log("Selected menu section ID:", e.target.value);
   };
 
   return (
@@ -148,10 +154,7 @@ const AddItem = ({ itemId }) => {
               onChange={(e) => setDisplayName(e.target.value)}
             />
             <div>Menu Section </div>
-            <select
-              value={menuSection}
-              onChange={(e) => setMenuSection(e.target.value)}
-            >
+            <select value={menuSection} onChange={handleMenuSectionChange}>
               <option value="" disabled>
                 Select a section
               </option>

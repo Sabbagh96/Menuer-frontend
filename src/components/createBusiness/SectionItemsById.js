@@ -9,13 +9,17 @@ const SectionItemsById = ({ sectionId }) => {
   useEffect(() => {
     if (sectionId) {
       axios
-        .get(`http://localhost:4000/sections/${sectionId}`, {
-          headers: {
-            Authorization: `Bearer ${auth.data.token}`,
-          },
-        })
+        .get(
+          `http://localhost:4000/menuer/business/dashboard/menuManger/sections/${sectionId}/items`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth.data.token}`,
+            },
+          }
+        )
         .then((response) => {
-          setItems(response.data.items);
+          setItems(response.data.items); // Assuming the response structure contains items
+          console.log(response.data.items);
         })
         .catch((error) => {
           console.error("Error fetching section items:", error);
@@ -30,24 +34,17 @@ const SectionItemsById = ({ sectionId }) => {
         <table>
           <thead>
             <tr>
-              <th>Code</th>
+              <th>Item ID</th>
               <th>Item Name</th>
-              <th>Image</th>
+              
             </tr>
           </thead>
-          <tbody>
+          <tbody >
             {items.map((item) => (
-              <tr key={item._id}>
-                <td>{item.code}</td>
-                <td>{item.name}</td>
-                <td>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    width="50"
-                    height="50"
-                  />
-                </td>
+              <tr key={item._id} >
+                <td>{item._id}</td>
+                <td>{item.item_display_name}</td>
+                
               </tr>
             ))}
           </tbody>

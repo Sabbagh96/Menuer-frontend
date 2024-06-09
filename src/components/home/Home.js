@@ -5,95 +5,97 @@ import { getAuthUser } from "../../helper/Storage";
 import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [data, setData] = useState([]);
-  const [businessName, setbusinessName] = useState("");
-  const [businessLogo, setbusinessLogo] = useState("");
-  const [businessCover, setbusinessCover] = useState("");
+  const [data, setData] = useState({});
+  const [businessName, setBusinessName] = useState("");
+  const [businessLogo, setBusinessLogo] = useState("");
+  const [businessCover, setBusinessCover] = useState("");
+  const [sections, setSections] = useState([]);
+  const [items, setItems] = useState([]);
+  const [noItemsMessage, setNoItemsMessage] = useState("");
 
-  const [buttons, setButtons] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
   const [filterBy, setFilterBy] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedButtonId, setSelectedButtonId] = useState("");
-
-  let totalPages;
 
   const auth = getAuthUser();
+  let totalPages = 1;
 
-  // Fetch the main data based on page, sortBy, filterBy, and searchTerm
   useEffect(() => {
     axios
-      .get("http://localhost:4000/menuer/business/dashboard/home", {
+      .get("http://localhost:4000/menuer/business/dashboard/home/sections", {
         headers: {
           Authorization: `Bearer ${auth.data.token}`,
         },
-        params: {
-          page: page,
-          sortBy: sortBy,
-          filterBy: filterBy,
-          searchTerm: searchTerm,
-        },
       })
       .then((response) => {
-        console.log(response, "data");
+        const responseData = response.data;
         setData(response.data);
-        setbusinessName(response.data.business.business_name);
-        setbusinessLogo(response.data.business.business_logo);
-        setbusinessCover(response.data.business.business_cover);
-        console.log(data.business, "Tdasddsad");
+        setSections(responseData.sections || []);
+
+        if (responseData.sections && responseData.sections.length > 0) {
+          fetchSectionItems(responseData.sections[0]._id);
+        } else {
+          setNoItemsMessage("There are no items.");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }, [page, sortBy, filterBy, searchTerm]);
 
-  // Fetch button data and data for the selected button ID
-  /* const fetchButtonData = (buttonId) => {
+  useEffect(() => {
     axios
-      .get("", {
-        params: {
-          button_id: buttonId,
+      .get("http://localhost:4000/menuer/business/dashboard/home", {
+        headers: {
+          Authorization: `Bearer ${auth.data.token}`,
         },
       })
       .then((response) => {
-        console.log("Button Data:", response.data);
-        setButtons(response.data.buttons); // Assuming response includes buttons data
-        if (buttonId) {
-          setData(response.data.data); // Assuming response includes data for the selected button
+        const responseData = response.data;
+        setData(response.data);
+        setBusinessName(response.data.business.business_name);
+        setBusinessLogo(response.data.business.business_logo);
+        setBusinessCover(response.data.business.business_cover);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, [page, sortBy, filterBy, searchTerm]);
+
+  const fetchSectionItems = (sectionId) => {
+    axios
+      .get(
+        `http://localhost:4000/menuer/business/dashboard/home/${sectionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.data.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        const responseData = response.data;
+        if (responseData.items && responseData.items.length > 0) {
+          setItems(responseData.items);
+          setNoItemsMessage("");
+        } else {
+          setItems([]);
+          setNoItemsMessage("There are no items in this section");
         }
       })
       .catch((error) => {
-        console.error("Error fetching buttons and data for button:", error);
+        console.error("Error:", error);
       });
   };
 
-  useEffect(() => {
-    fetchButtonData(selectedButtonId);
-  }, [selectedButtonId]);
-
-  useEffect(() => {
-    fetchButtonData("");
-  }, []);
-
-  const handleButtonClick = (id) => {
-    setSelectedButtonId(id);
-  }; */
-
   const showPrevious = () => {
-    console.log("prev clicked");
-    let currentPage = page;
-    if (currentPage > 1) {
-      currentPage--;
-      setPage(currentPage);
+    if (page > 1) {
+      setPage(page - 1);
     }
   };
 
   const showNext = () => {
-    console.log("next clicked");
-    let currentPage = page;
-    currentPage++;
-    setPage(currentPage);
+    setPage(page + 1);
   };
 
   const handleSortChange = (event) => {
@@ -119,15 +121,31 @@ const Home = () => {
             <img
               className="w-[870px] h-[200px] rounded-3xl absolute"
               src={businessCover}
+              alt="Business Cover"
             />
             <div className="absolute inline-flex">
-              <div className="w-16 h-16 rounded-xl absolute -top-14 -inset-80 -right-20 z-50 bg-red-900"></div>
+              <div className="w-16 h-16 rounded-xl absolute -top- z-50 -inset-80 -right-20 border border-gray-400"></div>
               <img
                 src={businessLogo}
-                className="w-16 h-16 bg-red-800 rounded-2xl"
+                className="w-16 h-16 bg-red-800 rounded-2xl border border-gray-400 shadow-2xl"
+                alt="Business Logo"
               />
-              {<div className="h-16 pt-5 ml-2 -mt-7">{businessName}</div>}
+              <div className="h-16 pt-5 ml-2 -mt-7 text-black font-bold ">
+                {businessName}
+              </div>
             </div>
+          </div>
+
+          <div className="w-[870px] mx-auto flex flex-wrap gap-2 mt-14">
+            {sections.map((section) => (
+              <button
+                key={section._id}
+                className="bg-gray-200 p-2 rounded"
+                onClick={() => fetchSectionItems(section._id)}
+              >
+                {section.section_name}
+              </button>
+            ))}
           </div>
 
           <div className="w-[870px] h-[46px] inline-flex justify-start mx-auto mt-[20px] gap-2">
@@ -143,7 +161,6 @@ const Home = () => {
               value={sortBy}
             >
               <option>Sort by</option>
-
               <option value="price">Price</option>
             </select>
             <select
@@ -156,24 +173,39 @@ const Home = () => {
               <option value="category2">Category 2</option>
             </select>
           </div>
-          {/* Map items here */}
-          <div className="w-[870px] grid grid-cols-2 mx-auto gap-4 mt-[36px]">
-            {/* {data.map((item) => (
-              <Link to={`/productdetails/${item.id}`} key={item.id}>
-                <div className="w-[400] h-44 p-6 bg-white rounded-3xl border border-slate-500 border-opacity-20 inline-flex justify-start items-start">
-                  <div className="w-32 h-32 rounded-2xl bg-red-600"></div>
-                  <div className="flex flex-col">
-                    <div className="w-full text-zinc-800 text-base p-3 -mt-3 font-normal font-['Alexandria'] leading-normal">
-                      {item.name}
-                    </div>
-                    <div className="w-[230px] h-[56px] text-gray-500 text-sm font-light font-['Alexandria'] leading-[21px]">
-                      {item.description.substring(0, 20)}
-                    </div>
+
+          {noItemsMessage ? (
+            <div className="w-[870px] mx-auto mt-10 text-center text-pink-400">
+              {noItemsMessage}
+            </div>
+          ) : (
+            <div className="w-[870px] grid grid-cols-3 mx-auto gap-4 mt-10 ">
+              {items.map((item) => (
+                <Link to={`/productdetails/${item._id}`} key={item._id}>
+                  <div className="border p-4 rounded bg-white border-pink-400">
+                    {item.item_id && item.item_id.item_image && (
+                      <img
+                        src={item.item_id.item_image}
+                        alt={item.item_display_name}
+                        className="w-full h-32 object-cover rounded mb-2 border border-pink-400"
+                      />
+                    )}
+                    <h3 className="text-xl font-bold mb-2">
+                      {item.item_display_name}
+                    </h3>
+                    <p className="text-gray-500 mb-2">{item.description}</p>
+                    <p className="text-lg font-semibold mb-2">
+                      {item.price} EGP
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Variants: {Object.keys(item.item_variants || {}).length}
+                    </p>
                   </div>
-                </div>
-              </Link>
-            ))}  */}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
           <div>
             <nav
               className="flex mx-auto justify-end gap-1 p-4"
